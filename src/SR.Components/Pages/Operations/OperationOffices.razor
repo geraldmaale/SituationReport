@@ -1,0 +1,45 @@
+﻿@page "/operations"
+@inherits OperationOfficeListBase
+@attribute [Authorize(Roles = $"{UserRoles.OperationAshaiman},{UserRoles.OperationKpone},{UserRoles.OperationMain}")]
+
+<PageTitle>Operation Offices - Situation Desk</PageTitle>
+<h3>Operation Offices</h3>
+
+<SpinLoader IsLoading="@IsLoading">
+    <LoadingTemplate>
+        <div class="spinner">
+            <Wave Color="@SpinnerColor" Center="true" />
+        </div>
+    </LoadingTemplate>
+    <ContentTemplate>
+        <div class="row">
+            @foreach (var office in DataSource)
+            {
+                if (Roles!.Find(x => x.ToLower() == office.Role.ToLower()) is not null)
+                {
+                    <Office OfficeName="@office.OfficeName"
+                    Location="@office.Location"
+                    ViewOffice="@(()=>ViewOffice(office))">
+                        <Content>
+                            <div>
+                                <table class="table">
+                                    <tbody>
+                                        @foreach (var item in office.OperationInspections
+                                       .OrderByDescending(d => d.EntryDate)
+                                       .Take(3))
+                                        {
+                                            <tr>
+                                                <td>@item.EntryDate.ToString(DateLabels.ShortDateFormat)</td>
+                                                <td>@item.Total</td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </Content>
+                    </Office>
+                }
+            }
+        </div>
+    </ContentTemplate>
+</SpinLoader>

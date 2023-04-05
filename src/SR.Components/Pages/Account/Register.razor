@@ -1,0 +1,97 @@
+﻿@page "/account/register"
+@layout AuthLayout
+@inherits RegisterBase
+
+<PageInfo Title="Register" ApplicationName="@ApplicationName"></PageInfo>
+
+@if (AuthState.IsSuccessful)
+{
+    <div class="container">
+        <div class="col-lg-6 mx-auto">
+            <h3 class="alert alert-success mt-4 text-center">@AuthState.Message</h3>
+                    <span>
+                        <h5>If you don’t see an email from us within a few minutes, a few things could have happened:</h5>
+                    
+                        <il class="fw-lighter text-left">
+                            <li>The email is in your spam or promotions folder. (Sometimes things get lost in there.)</li>
+                            <li>The email address you entered had a mistake or typo. (Happens to the best of us.)</li>
+                            <li>You accidentally gave us another email address.</li>
+                            <li>We can’t deliver the email to this address. (Usually because of corporate firewalls or filtering.)</li>
+                        </il>
+                    </span>
+        </div>
+    </div>
+    
+    
+}
+else
+{
+    <div id="account" class="form-signin">
+        <h4 class="mb-3 font-weight-normal text-center">Registration Details</h4>
+
+        <RadzenCard>
+            @if (!AuthState.IsSuccessful)
+            {
+                <EditForm Model="RegisterModel" OnValidSubmit="@OnSubmitted">
+                    <DataAnnotationsValidator/>
+
+                    <div class="mb-3">
+                        <label class="sr-only">Contact Name</label>
+                        <RadzenTextBox Class="w-100" placeholder="Contact name" @bind-Value="RegisterModel.ContactName"/>
+                        <ValidationMessage For="@(() => RegisterModel.ContactName)" Class="mb-2"/>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="sr-only">Name of Organization</label>
+                        <RadzenTextBox Class="w-100" placeholder="Name of organization" @bind-Value="RegisterModel.OrganizationName"/>
+                        <ValidationMessage For="@(() => RegisterModel.OrganizationName)" Class="mb-2"/>
+                    </div>
+
+
+                    <div class="mb-3">
+                        <label class="sr-only">Email</label>
+                        <RadzenTextBox Class="w-100" placeholder="Email" @bind-Value="RegisterModel.Email"/>
+                        <ValidationMessage For="@(() => RegisterModel.Email)" Class="mb-2"/>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="sr-only">Password</label>
+                        <RadzenPassword Class="w-100" placeholder="Password" @bind-Value="RegisterModel.Password"/>
+                        <ValidationMessage For="@(() => RegisterModel.Password)"/>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="sr-only">Confirm Password</label>
+                        <RadzenPassword Class="w-100" placeholder="Confirm Password" @bind-Value="RegisterModel.ConfirmPassword"/>
+                        <ValidationMessage For="@(() => RegisterModel.ConfirmPassword)"/>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <RadzenCheckBox TValue="bool"
+                                        Name="AgreeToTerms"
+                                        @bind-Value=@RegisterModel.AgreeToTerms />
+                        <RadzenLabel Text="I agree to the Terms of Service and Privacy Policy" 
+                                     Component="AgreeToTerms" 
+                                     Style="margin-left: 8px; vertical-align: middle; font-size: smaller" />
+                        <ValidationMessage For="@(() => RegisterModel.AgreeToTerms)"/>
+                    </div>
+
+                    <div class="align-content-between">
+                        <RadzenButton BusyText="Registering ..."
+                                      IsBusy=@IsSubmitted
+                                      Disabled="@(!RegisterModel.AgreeToTerms)"
+                                      class="w-100"
+                                      ButtonType="ButtonType.Submit"
+                                      Text="Register"/>
+                    </div>
+
+                </EditForm>
+            }
+
+            @if (AuthState.IsError)
+            {
+                <div class="text-danger mt-4">@AuthState.Message</div>
+            }
+        </RadzenCard>
+    </div>
+}

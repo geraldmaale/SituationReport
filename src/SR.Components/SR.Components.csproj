@@ -1,0 +1,34 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <SupportedPlatform Include="browser" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Blazored.FluentValidation" Version="2.0.3" />
+    <PackageReference Include="Blazored.LocalStorage" Version="4.2.0" />
+    <PackageReference Include="BlazorPro.Spinkit" Version="1.2.0" />
+    <PackageReference Include="FluentValidation" Version="11.0.0" />
+    <PackageReference Include="GreatIdeas.Blazor" Version="1.0.5" />
+    <PackageReference Include="GreatIdeas.MailServices" Version="1.0.2" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="6.0.5" />
+	<PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="6.0.5" />
+	<PackageReference Include="Radzen.Blazor" Version="3.18.10" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\SR.Data\SR.Data.csproj" />
+    <ProjectReference Include="..\SR.Shared\SR.Shared.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <AdditionalFiles Include="Pages\PassportProcessings\PassportProcessingList.razor" />
+  </ItemGroup>
+
+</Project>

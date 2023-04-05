@@ -1,0 +1,48 @@
+﻿@page "/account/resend-emailconfirmation"
+@inherits ResendEmailConfirmationBase
+@layout AuthLayout
+
+<PageInfo Title="Resend Confirmation" ApplicationName="@ApplicationName"></PageInfo>
+
+<div id="account" class="form-signin">
+    <h4 class="mb-3 font-weight-normal text-center">Resend Email confirmation</h4>
+    
+    <RadzenCard>
+        @if (!AuthState.IsSuccessful)
+        {
+            <EditForm Model="ResendEmailModel" OnValidSubmit="@OnValidSubmit">
+                <DataAnnotationsValidator />
+            
+                <div class="mb-3">
+                    <label class="sr-only">Email</label>
+                    <RadzenTextBox Class="w-100" placeholder="Email" 
+                                   @bind-Value="ResendEmailModel.Email" 
+                                   @oninput="@(Oninput)"/>
+                    <ValidationMessage For="@(() => ResendEmailModel.Email)" Class="mb-2" />
+                </div>
+            
+                <div class="align-content-between">
+                    <RadzenButton BusyText="Processing ..."
+                                  IsBusy=@IsSubmitted
+                                  Disabled="@IsDisabled"
+                                  class="w-100"
+                                  ButtonType="ButtonType.Submit"
+                                  Text="Resend Email" />
+                </div>
+
+            </EditForm>
+        }
+        else
+        {
+            <div class="alert alert-success mt-4">@AuthState.Message</div>
+            <a class="btn btn-success" style="align-content: end" href="identity/account/login">Login</a>
+        }
+        
+        @if (AuthState.IsError)
+        {
+            <div class="text-danger mt-4">@AuthState.Message</div>
+        }
+    </RadzenCard>
+</div>
+
+

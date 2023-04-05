@@ -1,0 +1,114 @@
+﻿@page "/crewprocessings/{CrewProcessingId:guid}"
+@using SR.Shared.DTOs.Crews
+@inherits CrewProcessingDetailBase
+@attribute [Authorize]
+
+<PageTitle>Crew Processing Details</PageTitle>
+<h3>Crew Processing Details</h3>
+
+<SpinLoader IsLoading="@IsLoading">
+    <LoadingTemplate>
+        <div class="spinner">
+            <Wave Color="@SpinnerColor" Center="true" />
+        </div>
+    </LoadingTemplate>
+    <ContentTemplate>
+        <div class="col-xl-10 p-0">
+            <RadzenCard>
+                <div class="row">
+                    <div class="col-md-5">
+                        <RadzenLabel Text="Entry Date"/>
+                        <div>
+                            <RadzenLabel Style="font-size: large;font-weight: bold"
+                                         Text="@CrewProcessingModel!.EntryDate.ToString(DateLabels.ShortDateTimeFormat)"/>
+                        </div>
+                    </div>
+                    <div class="col-md-5">
+                        <RadzenLabel Text="Prepared by"/>
+                        <div>
+                            <RadzenLabel Style="font-size: large;font-weight: bold"
+                                         Text="@OfficerName"/>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <RadzenLabel Text="Total"/>
+                        <div>
+                            <RadzenBadge Style="font-size: large;font-weight: bold">
+                                @CrewProcessingModel!.Total
+                            </RadzenBadge>
+                        </div>
+                    </div>
+                </div>
+            </RadzenCard>
+
+            <RadzenCard class="mt-2">
+                <div class="row">
+                    <h3 class="col-sm-8">Embarkation</h3>
+                    <RadzenDataGrid Data="@CrewProcessingModel!.Embarkations.OrderBy(x => x.CrewNationality)"
+                                    IsLoading="@IsLoading"
+                                    Responsive="false">
+                        <Columns>
+                            <RadzenDataGridColumn TItem="EmbarkationDto" Property="@nameof(EmbarkationDto.CrewNationality)" Title="Nationality"/>
+                            <RadzenDataGridColumn TItem="EmbarkationDto" Property="@nameof(EmbarkationDto.Count)" Title="Count"/>
+                        </Columns>
+                    </RadzenDataGrid>
+                </div>
+            </RadzenCard>
+
+            <RadzenCard class="mt-2">
+                <div class="row">
+                    <h3 class="col-sm-8">DisEmbarkation</h3>
+                    <RadzenDataGrid Data="@CrewProcessingModel!.DisEmbarkations.OrderBy(x => x.CrewNationality)"
+                                    Responsive="false">
+                        <Columns>
+                            <RadzenDataGridColumn TItem="DisEmbarkationDto" Property="@nameof(DisEmbarkationDto.CrewNationality)" Title="Nationality"/>
+                            <RadzenDataGridColumn TItem="DisEmbarkationDto" Property="@nameof(DisEmbarkationDto.Count)" Title="Count"/>
+                        </Columns>
+                    </RadzenDataGrid>
+                </div>
+            </RadzenCard>
+            
+            <RadzenCard class="mt-2">
+                <div class="row">
+                    <h3 class="col-sm-8">Ashore Pass</h3>
+                    <RadzenDataGrid Data="@CrewProcessingModel!.AshorePasses.OrderBy(x => x.AshorePassType)"
+                                    Responsive="false">
+                        <Columns>
+                            <RadzenDataGridColumn TItem="AshorePassDto" Property="@nameof(AshorePassDto.AshorePassType)" Title="Ashore Pass"/>
+                            <RadzenDataGridColumn TItem="AshorePassDto" Property="@nameof(AshorePassDto.NumberOfPass)" Title="No of Passes"/>
+                        </Columns>
+                    </RadzenDataGrid>
+                </div>
+            </RadzenCard>
+
+            <RadzenCard class="mt-2">
+                <div class="row">
+                    <h3 class="col-sm-8">Vessels Docked</h3>
+                    <RadzenDataGrid Data="@CrewProcessingModel!.VesselsDocked.OrderBy(x => x.VesselTypeName)"
+                                    Responsive="false">
+                        <Columns>
+                            <RadzenDataGridColumn TItem="VesselsDockedDto" Property="@nameof(VesselsDockedDto.VesselTypeName)" Title="Vessel Name"/>
+                            <RadzenDataGridColumn TItem="VesselsDockedDto" Property="@nameof(VesselsDockedDto.Count)" Title="Count"/>
+                        </Columns>
+                    </RadzenDataGrid>
+                </div>
+            </RadzenCard>
+
+            <div class="row justify-content-between mt-4">
+                <div class="d-flex align-items-end justify-content-between">
+                    <RadzenButton ButtonStyle="ButtonStyle.Light"
+                                  Icon="arrow_left"
+                                  Text="Back"
+                                  Click="@OnCancel"/>
+
+                    <RadzenButton ButtonType="ButtonType.Button"
+                                  Click="UpdateData"
+                                  Size="ButtonSize.Small"
+                                  ButtonStyle="ButtonStyle.Success"
+                                  Icon="edit"
+                                  Text="Edit"/>
+                </div>
+            </div>
+        </div>
+    </ContentTemplate>
+</SpinLoader>

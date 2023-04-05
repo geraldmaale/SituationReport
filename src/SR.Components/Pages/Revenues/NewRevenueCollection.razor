@@ -1,0 +1,144 @@
+﻿@page "/revenuecollections/new"
+@page "/revenuecollections/edit/{RevenueCollectionId:guid}"
+@using SR.Shared.Entities
+@using Microsoft.AspNetCore.Components
+@using SR.Shared.DTOs.Revenues
+@inherits RevenueCollectionsNewBase
+@attribute [Authorize]
+
+
+@if (RevenueCollectionId == Guid.Empty)
+{
+    <PageTitle>New Revenue Processing - Situation Desk</PageTitle>
+    <h3>New Revenue Processing</h3>
+}
+else
+{
+    <PageTitle>Edit Revenue Processing - Situation Desk</PageTitle>
+    <h3>Edit Revenue Processing</h3>
+}
+
+<div class="col-xl-8 m-0 p-0">
+    <EditForm Model="@RevenueCollectionModel" OnValidSubmit="@OnValidSubmit">
+        <FluentValidationValidator/>
+
+        <RadzenCard>
+            <div class="row">
+                <div class="col-md-5">
+                    <RadzenLabel Text="Entry Date"/>
+                    <div>
+                        <RadzenDatePicker Placeholder="Entry Date"
+                                          Kind="DateTimeKind.Utc"
+                                          DateFormat="@DateLabels.ShortDateTimeFormat"
+                                          style="width: 100%;"
+                                          @bind-Value="@RevenueCollectionModel!.EntryDate"/>
+                        <ValidationMessage For="@(() => RevenueCollectionModel!.EntryDate)"/>
+                    </div>
+                </div>
+                <div class="col-md-5">
+                    @if (RevenueCollectionId == Guid.Empty)
+                    {
+                        <RadzenLabel Text="To be prepared by"/>
+                        <div>
+                            <RadzenLabel Style="font-size: large;font-weight: bold" Text="@OfficerName"/>
+                        </div>
+                    }
+                    else
+                    {
+                        <RadzenLabel Text="Prepared by"/>
+                        <div>
+                            <RadzenLabel Style="font-size: large;font-weight: bold" 
+                                         Text="@OfficerName"/>
+                        </div>
+                    }
+                </div>
+                <div class="col-md-2">
+                    <RadzenLabel Text="Total Amount"/>
+                    <div>
+                        <RadzenBadge Style="font-size: large;font-weight: bold">
+                            @RevenueCollectionModel!.TotalAmount.ToString("N2")
+                        </RadzenBadge>
+                    </div>
+                </div>
+                
+            </div>
+        </RadzenCard>
+        
+        <RadzenCard class="mt-2">
+            <div class="row">
+                <h3 class="col-sm-8">Records</h3>
+                <div class="col-sm-4">
+                    <RadzenButton Icon="add" Text="Add"
+                                  ButtonStyle="ButtonStyle.Info"
+                                  Size="ButtonSize.Small"
+                                  Click="@AddRevenueRecord"/>
+                </div>
+            </div>
+            <div class="row mt-2">
+                <RadzenDataGrid Data="@RevenueCollectionModel!.RevenueCollectionDetails.OrderBy(x => x.RevenueTypeName)"
+                                IsLoading="@IsLoading"
+                                Responsive="true">
+                    <Columns>
+                        <RadzenDataGridColumn TItem="RevenueCollectionDetailDto" Property="@nameof(RevenueCollectionDetailDto.RevenueTypeId)" Title="Revenue Type">
+                            <Template Context="data">
+                                <RadzenDropDown AllowClear="true"
+                                                class="w-100"
+                                                Data=@RevenueTypes
+                                                TextProperty="@nameof(RevenueType.Name)"
+                                                ValueProperty="@nameof(RevenueType.Id)"
+                                                @bind-Value="@data.RevenueTypeId">
+                                </RadzenDropDown>
+                            </Template>
+                        </RadzenDataGridColumn>
+                        <RadzenDataGridColumn TItem="RevenueCollectionDetailDto" Property="@nameof(RevenueCollectionDetailDto.Amount)" Title="Amount">
+                            <Template Context="data">
+                                <RadzenNumeric TValue="decimal" @bind-Value="@data.Amount" Style="width: 100%" Min="1"></RadzenNumeric>
+                            </Template>
+                        </RadzenDataGridColumn>
+                        <RadzenDataGridColumn TItem="RevenueCollectionDetailDto" Title="Delete"
+                                              Width="10%"
+                                              TextAlign="TextAlign.Center" Filterable="false" Sortable="false">
+                            <Template Context="data">
+                                <RadzenButton ButtonStyle="ButtonStyle.Danger" Size="ButtonSize.Small"
+                                              Icon="delete" Class="m-1"
+                                              Click="@(() => OnDeleteRevenueTypeAsync(data))"/>
+                            </Template>
+                        </RadzenDataGridColumn>
+
+                    </Columns>
+                </RadzenDataGrid>
+            </div>
+        </RadzenCard>
+
+        <div class="row justify-content-between mt-4">
+            <div class="d-flex align-items-end justify-content-between">
+                <RadzenButton ButtonStyle="ButtonStyle.Light"
+                              Icon="cancel"
+                              Text="Cancel"
+                              Click="@OnCancel"/>
+
+                @if (RevenueCollectionId == Guid.Empty)
+                {
+                    <RadzenButton ButtonType="ButtonType.Submit"
+                                  ButtonStyle="ButtonStyle.Success"
+                                  Size="ButtonSize.Small"
+                                  IsBusy="@IsSubmitted"
+                                  BusyText="Saving ..."
+                                  Icon="save"
+                                  Text="Save"/>
+                }
+                else
+                {
+                    <RadzenButton ButtonType="ButtonType.Submit"
+                                  Size="ButtonSize.Small"
+                                  ButtonStyle="ButtonStyle.Success"
+                                  IsBusy="@IsSubmitted"
+                                  BusyText="Updating ..."
+                                  Icon="update"
+                                  Text="Update"/>
+                }
+            </div>
+        </div>
+    </EditForm>
+</div>
+

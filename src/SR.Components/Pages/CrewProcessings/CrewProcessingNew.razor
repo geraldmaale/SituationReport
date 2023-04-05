@@ -1,0 +1,282 @@
+﻿@page "/crewprocessings/new"
+@page "/crewprocessings/edit/{CrewProcessingId:guid}"
+@using SR.Shared.DTOs.Crews
+@using SR.Shared.Entities
+@using Microsoft.AspNetCore.Components
+@inherits CrewProcessingNewBase
+@attribute [Authorize]
+
+@if (CrewProcessingId == Guid.Empty)
+{
+    <PageTitle>New Crew Processing - Situation Desk</PageTitle>
+    <h3>New Crew Processing</h3>
+}
+else
+{
+    <PageTitle>Edit Crew Processing - Situation Desk</PageTitle>
+    <h3>Edit Crew Processing</h3>
+}
+
+<SpinLoader IsLoading="@IsLoading">
+<LoadingTemplate>
+    <div class="spinner">
+        <Wave Color="@SpinnerColor" Center="true"/>
+    </div>
+</LoadingTemplate>
+<ContentTemplate>
+<div class="col-xl-8 p-0">
+<EditForm Model="@CrewProcessingModel" OnValidSubmit="@OnValidSubmit">
+<FluentValidationValidator/>
+
+<RadzenCard>
+    <div class="row">
+        <div class="col-md-5">
+            <RadzenLabel Text="Entry Date"/>
+            <div>
+                <RadzenDatePicker Placeholder="Entry Date"
+                                  Kind="DateTimeKind.Utc"
+                                  DateFormat="@DateLabels.ShortDateTimeFormat"
+                                  style="width: 100%;"
+                                  @bind-Value="@CrewProcessingModel!.EntryDate"/>
+                <ValidationMessage For="@(() => CrewProcessingModel!.EntryDate)"/>
+            </div>
+        </div>
+        <div class="col-md-5">
+            @if (CrewProcessingId == Guid.Empty)
+            {
+                <RadzenLabel Text="To be prepared by"/>
+                <div>
+                    <RadzenLabel Style="font-size: large;font-weight: bold" Text="@OfficerName"/>
+                </div>
+            }
+            else
+            {
+                <RadzenLabel Text="Prepared by"/>
+                <div>
+                    <RadzenLabel Style="font-size: large;font-weight: bold"
+                                 Text="@OfficerName"/>
+                </div>
+            }
+        </div>
+        <div class="col-md-2">
+            <RadzenLabel Text="Total"/>
+            <div>
+                <RadzenBadge Style="font-size: large;font-weight: bold">
+                    @CrewProcessingModel!.Total
+                </RadzenBadge>
+            </div>
+        </div>
+    </div>
+</RadzenCard>
+
+<!-- Embarkations -->
+<RadzenCard class="mt-2">
+    <div class="row">
+        <h3 class="col-sm-8">Embarkation</h3>
+        <div class="col-sm-4">
+            <RadzenButton Icon="add" Text="Add"
+                          ButtonStyle="ButtonStyle.Info"
+                          Size="ButtonSize.Small"
+                          Click="@AddEmbarkation"/>
+        </div>
+        <RadzenDataGrid Data="@CrewProcessingModel!.Embarkations.OrderBy(x => x.CrewNationality)"
+                        IsLoading="@IsLoading"
+                        Responsive="true">
+            <Columns>
+                <RadzenDataGridColumn TItem="EmbarkationDto" Property="@nameof(EmbarkationDto.CrewNationality)" Title="Nationality">
+                    <Template Context="data">
+                        <RadzenDropDown AllowClear="true"
+                                        class="w-100"
+                                        Data=@NationalityTypes
+                                        TextProperty="@nameof(NationalityType.Name)"
+                                        ValueProperty="@nameof(NationalityType.Id)"
+                                        @bind-Value="@data.NationalityId">
+                        </RadzenDropDown>
+                    </Template>
+                </RadzenDataGridColumn>
+                <RadzenDataGridColumn TItem="EmbarkationDto" Property="@nameof(EmbarkationDto.Count)" Title="Count">
+                    <Template Context="data">
+                        <RadzenNumeric TValue="int" @bind-Value="@data.Count" Style="width: 100%" Min="1"></RadzenNumeric>
+                    </Template>
+                </RadzenDataGridColumn>
+                <RadzenDataGridColumn TItem="EmbarkationDto" Title="Delete"
+                                      Width="10%"
+                                      TextAlign="TextAlign.Center" Filterable="false" Sortable="false">
+                    <Template Context="data">
+                        <RadzenButton ButtonStyle="ButtonStyle.Danger" Size="ButtonSize.Small"
+                                      Icon="delete" Class="m-1"
+                                      Click="@(() => OnDeleteEmbarkationAsync(data))"/>
+                    </Template>
+                </RadzenDataGridColumn>
+
+            </Columns>
+        </RadzenDataGrid>
+    </div>
+</RadzenCard>
+
+<!-- DisEmbarkations -->
+<RadzenCard class="mt-2">
+    <div class="row">
+        <h3 class="col-sm-8">DisEmbarkation</h3>
+        <div class="col-sm-4">
+            <RadzenButton Icon="add" Text="Add"
+                          ButtonStyle="ButtonStyle.Info"
+                          Size="ButtonSize.Small"
+                          Click="@AddDisEmbarkation"/>
+        </div>
+        <RadzenDataGrid Data="@CrewProcessingModel!.DisEmbarkations.OrderBy(x => x.CrewNationality)"
+                        Responsive="true">
+            <Columns>
+                <RadzenDataGridColumn TItem="DisEmbarkationDto" Property="@nameof(DisEmbarkationDto.CrewNationality)" Title="Nationality">
+                    <Template Context="data">
+                        <RadzenDropDown AllowClear="true"
+                                        class="w-100"
+                                        Data=@NationalityTypes
+                                        TextProperty="@nameof(NationalityType.Name)"
+                                        ValueProperty="@nameof(NationalityType.Id)"
+                                        @bind-Value="@data.NationalityId">
+                        </RadzenDropDown>
+                    </Template>
+                </RadzenDataGridColumn>
+                <RadzenDataGridColumn TItem="DisEmbarkationDto" Property="@nameof(DisEmbarkationDto.Count)" Title="Count">
+                    <Template Context="data">
+                        <RadzenNumeric TValue="int" @bind-Value="@data.Count" Style="width: 100%" Min="1"></RadzenNumeric>
+                    </Template>
+                </RadzenDataGridColumn>
+                <RadzenDataGridColumn TItem="DisEmbarkationDto" Title="Delete"
+                                      Width="10%"
+                                      TextAlign="TextAlign.Center" Filterable="false" Sortable="false">
+                    <Template Context="data">
+                        <RadzenButton ButtonStyle="ButtonStyle.Danger" Size="ButtonSize.Small"
+                                      Icon="delete" Class="m-1"
+                                      Click="@(() => OnDeleteDisEmbarkationAsync(data))"/>
+                    </Template>
+                </RadzenDataGridColumn>
+
+            </Columns>
+        </RadzenDataGrid>
+    </div>
+</RadzenCard>
+
+<!-- Ashore Pass -->
+<RadzenCard class="mt-2">
+    <div class="row">
+        <h3 class="col-sm-8">Ashore Pass</h3>
+        <div class="col-sm-4">
+            <RadzenButton Icon="add" Text="Add"
+                          ButtonStyle="ButtonStyle.Info"
+                          Size="ButtonSize.Small"
+                          Click="@AddAshorePass"/>
+        </div>
+        <RadzenDataGrid Data="@CrewProcessingModel!.AshorePasses.OrderBy(x => x.AshorePassType)"
+                        Responsive="true">
+            <Columns>
+                <RadzenDataGridColumn TItem="AshorePassDto" Property="@nameof(AshorePassDto.AshorePassType)" Title="Ashore Pass">
+                    <Template Context="data">
+                        <RadzenDropDown AllowClear="true"
+                                        class="w-100"
+                                        Data=@AshorePassTypes
+                                        TextProperty="@nameof(AshorePassType.Name)"
+                                        ValueProperty="@nameof(AshorePassType.Id)"
+                                        @bind-Value="@data.PassTypeId">
+                        </RadzenDropDown>
+                    </Template>
+                </RadzenDataGridColumn>
+                <RadzenDataGridColumn TItem="AshorePassDto" Property="@nameof(AshorePassDto.NumberOfPass)" Title="No of Passes">
+                    <Template Context="data">
+                        <RadzenNumeric TValue="int" @bind-Value="@data.NumberOfPass" Style="width: 100%" Min="1"></RadzenNumeric>
+                    </Template>
+                </RadzenDataGridColumn>
+                <RadzenDataGridColumn TItem="AshorePassDto" Title="Delete"
+                                      Width="10%"
+                                      TextAlign="TextAlign.Center" Filterable="false" Sortable="false">
+                    <Template Context="data">
+                        <RadzenButton ButtonStyle="ButtonStyle.Danger" Size="ButtonSize.Small"
+                                      Icon="delete" Class="m-1"
+                                      Click="@(() => OnDeleteAshorePassAsync(data))"/>
+                    </Template>
+                </RadzenDataGridColumn>
+
+            </Columns>
+        </RadzenDataGrid>
+    </div>
+</RadzenCard>
+
+<!-- Vessels Docked -->
+<RadzenCard class="mt-2">
+    <div class="row">
+        <h3 class="col-sm-8">Vessels Docked</h3>
+        <div class="col-sm-4">
+            <RadzenButton Icon="add"
+                          Text="Add"
+                          ButtonStyle="ButtonStyle.Info"
+                          Size="ButtonSize.Small"
+                          Click="@AddVesselsDocked"/>
+        </div>
+        <RadzenDataGrid Data="@CrewProcessingModel!.VesselsDocked.OrderBy(x => x.VesselTypeName)"
+                        Responsive="true">
+            <Columns>
+                <RadzenDataGridColumn TItem="VesselsDockedDto" Property="@nameof(VesselsDockedDto.VesselTypeName)" Title="Vessel Name">
+                    <Template Context="data">
+                        <RadzenDropDown AllowClear="true"
+                                        class="w-100"
+                                        Data=@VesselTypes
+                                        TextProperty="@nameof(VesselType.Name)"
+                                        ValueProperty="@nameof(VesselType.Id)"
+                                        @bind-Value="@data.VesselTypeId">
+                        </RadzenDropDown>
+                    </Template>
+                </RadzenDataGridColumn>
+                <RadzenDataGridColumn TItem="VesselsDockedDto" Property="@nameof(VesselsDockedDto.Count)" Title="Count">
+                    <Template Context="data">
+                        <RadzenNumeric TValue="int" @bind-Value="@data.Count" Style="width: 100%" Min="1"></RadzenNumeric>
+                    </Template>
+                </RadzenDataGridColumn>
+                <RadzenDataGridColumn TItem="VesselsDockedDto" Title="Delete"
+                                      Width="10%"
+                                      TextAlign="TextAlign.Center" Filterable="false" Sortable="false">
+                    <Template Context="data">
+                        <RadzenButton ButtonStyle="ButtonStyle.Danger" Size="ButtonSize.Small"
+                                      Icon="delete" Class="m-1"
+                                      Click="@(() => OnDeleteVesselDockedAsync(data))"/>
+                    </Template>
+                </RadzenDataGridColumn>
+
+            </Columns>
+        </RadzenDataGrid>
+    </div>
+</RadzenCard>
+
+<div class="row justify-content-between mt-4">
+    <div class="d-flex align-items-end justify-content-between">
+        <RadzenButton ButtonStyle="ButtonStyle.Light"
+                      Icon="cancel"
+                      Text="Cancel"
+                      Click="@OnCancel"/>
+
+        @if (CrewProcessingId == Guid.Empty)
+        {
+            <RadzenButton ButtonType="ButtonType.Submit"
+                          ButtonStyle="ButtonStyle.Success"
+                          Size="ButtonSize.Small"
+                          IsBusy="@IsSubmitted"
+                          BusyText="Saving ..."
+                          Icon="save"
+                          Text="Save"/>
+        }
+        else
+        {
+            <RadzenButton ButtonType="ButtonType.Submit"
+                          Size="ButtonSize.Small"
+                          ButtonStyle="ButtonStyle.Success"
+                          IsBusy="@IsSubmitted"
+                          BusyText="Updating ..."
+                          Icon="update"
+                          Text="Update"/>
+        }
+    </div>
+</div>
+</EditForm>
+</div>
+</ContentTemplate>
+</SpinLoader>

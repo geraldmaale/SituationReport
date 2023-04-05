@@ -1,0 +1,145 @@
+﻿@page "/reports"
+@inherits ReportsBase
+
+<PageTitle>Situation Reports</PageTitle>
+<h3>Reports</h3>
+
+<RadzenCard class="mb-2">
+    <h5 class="mb-2">Select date range to generate reports</h5>
+    <div class="row">
+        <div class="col-sm-6">
+            <RadzenLabel Text="Start Date"/>
+            <RadzenDatePicker Style="width: 100%"
+                              DateFormat="dd-MMM-yyyy"
+                              Kind="@DateTimeKind.Utc"
+                              @bind-Value="@PagingParameters.StartDate"/>
+        </div>
+        <div class="col-sm-6">
+            <RadzenLabel Text="End Date"/>
+            <RadzenDatePicker Style="width: 100%"
+                              DateFormat="dd-MMM-yyyy"
+                              Kind="@DateTimeKind.Utc"
+                              @bind-Value="@PagingParameters.EndDate"/>
+        </div>
+    </div>
+</RadzenCard>
+
+<RadzenCard>
+    <div class="col-md-3 mx-auto">
+        <h2 style="color: goldenrod;">Work in progress ...</h2>
+        <RadzenImage Path="images/work-in-progress.jpg" Style="height:150px;"/>
+    </div>
+</RadzenCard>
+@*
+<div class="row">
+    <div class="col-sm-3 mb-2">
+        <RadzenCard>
+            <h5 class="mb-2">Embarkations</h5>
+            <div>
+                <RadzenButton Icon="download_file"
+                              Text="Generate Report"
+                              IsBusy="@IsSubmitted"
+                              BusyText="Processing ..."
+                              Disabled
+                              Click="OnExportRevenues"/>
+            </div>
+        </RadzenCard>
+    </div>
+
+    <div class="col-sm-3 mb-2">
+        <RadzenCard>
+            <h5 class="mb-2">Disembarkations</h5>
+            <div>
+                <RadzenButton Icon="download_file"
+                              Text="Generate Report"
+                              IsBusy="@IsSubmitted"
+                              BusyText="Processing ..."
+                              Disabled
+                              Click="OnExportRevenues"/>
+            </div>
+        </RadzenCard>
+    </div>
+
+    <div class="col-sm-3 mb-2">
+        <RadzenCard>
+            <h5 class="mb-2">Ashore Passes</h5>
+            <div>
+                <RadzenButton Icon="download_file"
+                              Text="Generate Report"
+                              IsBusy="@IsSubmitted"
+                              BusyText="Processing ..."
+                              Disabled
+                              Click="OnExportRevenues"/>
+            </div>
+        </RadzenCard>
+    </div>
+
+    <div class="col-sm-3 mb-2">
+        <RadzenCard>
+            <h5 class="mb-2">Vessels Docked</h5>
+            <div>
+                <RadzenButton Icon="download_file"
+                              Text="Generate Report"
+                              IsBusy="@IsSubmitted"
+                              BusyText="Processing ..."
+                              Disabled
+                              Click="OnExportRevenues"/>
+            </div>
+        </RadzenCard>
+    </div>
+
+    <div class="col-sm-3 mb-2">
+        <RadzenCard>
+            <h5 class="mb-2">Passport Processings</h5>
+            <div>
+                <RadzenButton Icon="download_file"
+                              Text="Generate Report"
+                              IsBusy="@IsSubmitted"
+                              BusyText="Processing ..."
+                              Disabled
+                              Click="OnExportRevenues"/>
+            </div>
+        </RadzenCard>
+    </div>
+
+    <div class="col-sm-3 mb-2">
+        <RadzenCard>
+            <h5 class="mb-2">Permit Processings</h5>
+            <div>
+                <RadzenButton Icon="download_file"
+                              Text="Generate Report"
+                              IsBusy="@IsSubmitted"
+                              BusyText="Processing ..."
+                              Disabled
+                              Click="OnExportRevenues"/>
+            </div>
+        </RadzenCard>
+    </div>
+
+    <div class="col-sm-3 mb-2">
+        <RadzenCard>
+            <h5 class="mb-2">Operation Inspections</h5>
+            <div>
+                <RadzenButton Icon="download_file"
+                              Text="Generate Report"
+                              IsBusy="@IsSubmitted"
+                              BusyText="Processing ..."
+                              Disabled
+                              Click="OnExportRevenues"/>
+            </div>
+        </RadzenCard>
+    </div>
+
+    <div class="col-sm-3 mb-2">
+        <RadzenCard>
+            <h5 class="mb-2">Revenue Collections</h5>
+            <div>
+                <RadzenButton Icon="download_file"
+                              Text="Generate Report"
+                              IsBusy="@IsSubmitted"
+                              BusyText="Processing ..."
+                              Click="OnExportRevenues"/>
+            </div>
+        </RadzenCard>
+    </div>
+</div>*@

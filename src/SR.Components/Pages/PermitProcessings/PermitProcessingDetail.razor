@@ -1,0 +1,114 @@
+﻿@page "/permitprocessings/{PermitUnitId:guid}"
+@using SR.Shared.DTOs.Permits
+@inherits PermitUnitDetailBase
+@attribute [Authorize]
+
+<PageTitle>Permit Processing Details</PageTitle>
+<h3>Permit Processing Details</h3>
+
+<SpinLoader IsLoading="@IsLoading">
+    <LoadingTemplate>
+        <div class="spinner">
+            <Wave Color="@SpinnerColor" Center="true" />
+        </div>
+    </LoadingTemplate>
+    <ContentTemplate>
+        <div>
+            <RadzenCard class="col-sm-12">
+                <div class="row">
+                    <div class="col-md-5">
+                        <RadzenLabel Text="Entry Date"/>
+                        <div>
+                            <RadzenLabel Style="font-size: large;font-weight: bold"
+                                         Text="@PermitUnitModel!.EntryDate.ToString(DateLabels.ShortDateTimeFormat)"/>
+                        </div>
+                    </div>
+                    <div class="col-md-5">
+                        <RadzenLabel Text="Prepared by"/>
+                        <div>
+                            <RadzenLabel Style="font-size: large;font-weight: bold"
+                                         Text="@PermitUnitModel.OfficerName"/>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <RadzenLabel Text="Total"/>
+                        <div>
+                            <RadzenBadge Style="font-size: large;font-weight: bold">
+                                @PermitUnitModel!.Total
+                            </RadzenBadge>
+                        </div>
+                    </div>
+                </div>
+            </RadzenCard>
+
+            <RadzenCard class="mt-2 col-sm-12">
+                <div class="row">
+                    <h3 class="col-sm-8">Records</h3>
+                    <RadzenDataGrid Data="@PermitUnitModel!.PermitProcessingDetails!.OrderBy(x => x.Name)"
+                                    IsLoading="@IsLoading"
+                                    Responsive="true">
+                        <Columns>
+                            <RadzenDataGridColumn TItem="PermitProcessingDetailDto" 
+                                                  Property="@nameof(PermitProcessingDetailDto.Name)" 
+                                                  Title="Application Name">
+                            </RadzenDataGridColumn>
+                            <RadzenDataGridColumn TItem="PermitProcessingDetailDto" 
+                                                  Property="@nameof(PermitProcessingDetailDto.Gender)" 
+                                                  Title="Gender">
+                            </RadzenDataGridColumn>
+                            <RadzenDataGridColumn TItem="PermitProcessingDetailDto" 
+                                                  Property="@nameof(PermitProcessingDetailDto.Nationality)" 
+                                                  Title="Nationality">
+                            </RadzenDataGridColumn>
+                            <RadzenDataGridColumn TItem="PermitProcessingDetailDto" 
+                                                  Property="@nameof(PermitProcessingDetailDto.PermitType)" 
+                                                  Title="Permit Type">
+                            </RadzenDataGridColumn>
+                            <RadzenDataGridColumn TItem="PermitProcessingDetailDto" 
+                                                  Property="@nameof(PermitProcessingDetailDto.PermitNumber)" 
+                                                  Title="Permit #">
+                            </RadzenDataGridColumn>
+                            <RadzenDataGridColumn TItem="PermitProcessingDetailDto" 
+                                                  Property="@nameof(PermitProcessingDetailDto.Duration)" 
+                                                  Title="Duration">
+                            </RadzenDataGridColumn>
+                        </Columns>
+                    </RadzenDataGrid>
+                </div>
+            </RadzenCard>
+    
+            <RadzenCard class="col-sm-12 mt-2">
+                <div class="row">
+                    <div class="col-md-6">
+                        <RadzenLabel Text="Remarks"/>
+                        <div>
+                            <RadzenTextArea ReadOnly Style="width:100%">@PermitUnitModel.Remarks</RadzenTextArea>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <RadzenLabel Text="Penalties"/>
+                        <div>
+                            <RadzenTextArea ReadOnly Style="width:100%">@PermitUnitModel.Penalties</RadzenTextArea>
+                        </div>
+                    </div>
+                </div>
+            </RadzenCard>
+    
+            <div class="row justify-content-between mt-4 col-sm-12">
+                <div class="d-flex align-items-end justify-content-between">
+                    <RadzenButton ButtonStyle="ButtonStyle.Light"
+                                  Icon="arrow_left"
+                                  Text="Back"
+                                  Click="@OnCancel"/>
+
+                    <RadzenButton ButtonType="ButtonType.Button"
+                                  Click="UpdateData"
+                                  Size="ButtonSize.Small"
+                                  ButtonStyle="ButtonStyle.Success"
+                                  Icon="edit"
+                                  Text="Edit"/>
+                </div>
+            </div>
+        </div>
+    </ContentTemplate>
+</SpinLoader>

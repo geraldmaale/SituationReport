@@ -1,0 +1,102 @@
+﻿@page "/operations/{OperationOfficeId:guid}/inspection/{OperationInspectionId:guid}/details"
+@using SR.Shared.DTOs.Operations
+@inherits OperationInspectionDetailsBase
+@attribute [Authorize(Roles = $"{UserRoles.OperationAshaiman},{UserRoles.OperationKpone},{UserRoles.OperationMain}")]
+
+<h2 style="color: #157347">@OfficeName</h2>
+
+@if (OperationInspectionId == Guid.Empty)
+{
+    <PageTitle>New Operation Inspection - Situation Desk</PageTitle>
+    <h3>New Operation Inspection</h3>
+}
+else
+{
+    <PageTitle>Edit Operation Inspection - Situation Desk</PageTitle>
+    <h3>Edit Operation Inspection</h3>
+}
+
+<SpinLoader IsLoading="@IsLoading">
+    <LoadingTemplate>
+        <div class="spinner">
+            <Wave Color="@SpinnerColor" Center="true" />
+        </div>
+    </LoadingTemplate>
+    <ContentTemplate>
+        <div class="col-xl-8 p-0">
+            <RadzenCard>
+                <div class="row">
+                    <div class="col-md-5">
+                        <RadzenLabel Text="Entry Date"/>
+                        <div>
+                            <RadzenLabel Text="@OperationInspectionModel!.EntryDate.ToString(DateLabels.ShortDateTimeFormat)" />
+                        </div>
+                    </div>
+                    <div class="col-md-5">
+                        @if (OperationInspectionId == Guid.Empty)
+                        {
+                            <RadzenLabel Text="To be prepared by"/>
+                            <div>
+                                <RadzenLabel Style="font-size: large;font-weight: bold" Text="@OfficerName"/>
+                            </div>
+                        }
+                        else
+                        {
+                            <RadzenLabel Text="Prepared by"/>
+                            <div>
+                                <RadzenLabel Style="font-size: large;font-weight: bold" 
+                                             Text="@OfficerName"/>
+                            </div>
+                        }
+                    </div>
+                    <div class="col-md-2">
+                        <RadzenLabel Text="Total"/>
+                        <div>
+                            <RadzenBadge Style="font-size: large;font-weight: bold">
+                                @OperationInspectionModel!.Total
+                            </RadzenBadge>
+                        </div>
+                    </div>
+                </div>
+            </RadzenCard>
+
+            <RadzenCard class="mt-2">
+                <div class="row">
+                    <h3 class="col-sm-8">Records</h3>
+                    <RadzenDataGrid Data="@OperationInspectionModel!.OperationInspectionDetails"
+                                    IsLoading="@IsLoading"
+                                    Responsive="true">
+                        <Columns>
+                            <RadzenDataGridColumn TItem="OperationInspectionDetailDto"
+                                                  Property="@nameof(OperationInspectionDetailDto.OperationTypeName)"
+                                                  Title="Operation Type">
+                            </RadzenDataGridColumn>
+                            <RadzenDataGridColumn TItem="OperationInspectionDetailDto"
+                                                  Property="@nameof(OperationInspectionDetailDto.Number)"
+                                                  Title="Number">
+                            </RadzenDataGridColumn>
+
+                        </Columns>
+                    </RadzenDataGrid>
+                </div>
+            </RadzenCard>
+
+            <div class="row justify-content-between mt-4">
+                <div class="d-flex align-items-end justify-content-between">
+                    <RadzenButton ButtonStyle="ButtonStyle.Light"
+                                  Icon="arrow_left"
+                                  Text="Back"
+                                  Click="@OnCancel"/>
+        
+                    <RadzenButton ButtonType="ButtonType.Button"
+                                  Click="UpdateData"
+                                  Size="ButtonSize.Small"
+                                  ButtonStyle="ButtonStyle.Success"
+                                  Icon="edit"
+                                  Text="Edit"/>
+                </div>
+            </div>
+        </div>
+    </ContentTemplate>
+</SpinLoader>
+

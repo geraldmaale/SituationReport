@@ -1,0 +1,175 @@
+﻿@page "/passportprocessings/new"
+@page "/passportprocessings/edit/{PassportProcessingId:guid}"
+@using Microsoft.AspNetCore.Components
+@inherits PassportProcessingNewBase
+@attribute [Authorize]
+
+@if (PassportProcessingId == Guid.Empty)
+{
+    <PageTitle>New Passport Processing - Situation Desk</PageTitle>
+    <h3>New Passport Processing</h3>
+}
+else
+{
+    <PageTitle>Edit Passport Processing - Situation Desk</PageTitle>
+    <h3>Edit Passport Processing</h3>
+}
+
+<SpinLoader IsLoading="@IsLoading">
+    <LoadingTemplate>
+        <div class="spinner">
+            <Wave Color="@SpinnerColor" Center="true" />
+        </div>
+    </LoadingTemplate>
+    <ContentTemplate>
+        <div class="col-xl-6 p-0">
+            <EditForm Model="@PassportProcessingModel" OnValidSubmit="@OnValidSubmit">
+                <FluentValidationValidator />
+                <ValidationSummary></ValidationSummary>
+
+                <RadzenCard>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <RadzenLabel Text="Entry Date"/>
+                            <div>
+                                <RadzenDatePicker Placeholder="Entry Date"
+                                                  Kind="DateTimeKind.Utc"
+                                                  DateFormat="@DateLabels.ShortDateTimeFormat"
+                                                  style="width: 100%;"
+                                                  @bind-Value="@PassportProcessingModel!.EntryDate"/>
+                                <ValidationMessage For="@(() => PassportProcessingModel!.EntryDate)"/>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            @if (PassportProcessingId == Guid.Empty)
+                            {
+                                <RadzenLabel Text="To be prepared by"/>
+                                <div>
+                                    <RadzenLabel Style="font-size: large;font-weight: bold" Text="@OfficerName"/>
+                                </div>
+                            }
+                            else
+                            {
+                                <RadzenLabel Text="Prepared by"/>
+                                <div>
+                                    <RadzenLabel Style="font-size: large;font-weight: bold" 
+                                                 Text="@OfficerName"/>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </RadzenCard>
+        
+                <EditForm Model="@PassportProcessingModel" Context="records">
+                    <RadzenCard class="mt-2">
+                        <h3 class="col-sm-8">Records</h3>
+                
+                        <div class="row">
+                            <div class="col-md-3">
+                                <RadzenLabel Text="No. of New"></RadzenLabel>
+                                <div>
+                                    <RadzenNumeric TValue="int" Min="0"
+                                                   @bind-Value="@PassportProcessingModel.NumberOfNew"/>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <RadzenLabel Text="No. of Renewal"></RadzenLabel>
+                                <div>
+                                    <RadzenNumeric TValue="int" Min="0"
+                                                   @bind-Value="@PassportProcessingModel.NumberOfRenewal"/>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <RadzenLabel Text="No. of Missing/Stolen"></RadzenLabel>
+                                <div>
+                                    <RadzenNumeric TValue="int" Min="0"
+                                                   @bind-Value="@PassportProcessingModel.NumberOfMissing"/>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <RadzenLabel Text="Total Processed" Style="font-size: large;color: darkgreen"></RadzenLabel>
+                                <div>
+                                    <b style="font-size: large;color: darkgreen">@PassportProcessingModel!.TotalProcessed</b>
+                                </div>
+                            </div>
+                        </div>
+                    </RadzenCard>
+            
+                    <RadzenCard class="mt-2">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <RadzenLabel Text="No. of Children"></RadzenLabel>
+                                <div>
+                                    <RadzenNumeric TValue="int" Min="0"
+                                                   @bind-Value="@PassportProcessingModel.NumberOfChildren"/>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <RadzenLabel Text="No. of Adults"></RadzenLabel>
+                                <div>
+                                    <RadzenNumeric TValue="int" Min="0"
+                                                   @bind-Value="@PassportProcessingModel.NumberOfAdults"/>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <RadzenLabel Text="Total" style="font-size: large;color: darkgreen"></RadzenLabel>
+                                <div>
+                                    <b style="font-size: large;color: darkgreen">@(PassportProcessingModel.NumberOfChildren+PassportProcessingModel.NumberOfAdults)</b>
+                                </div>
+                            </div>
+                        </div>
+                    </RadzenCard>
+                    <RadzenCard class="mt-2">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <RadzenLabel Text="No. Declined"></RadzenLabel>
+                                <div>
+                                    <RadzenNumeric TValue="int" Min="0"
+                                                   @bind-Value="@PassportProcessingModel!.NumberDeclined"/>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <RadzenLabel Text="Total Applications" style="font-size: large;color: darkgreen"></RadzenLabel>
+                                <div>
+                                    <b style="font-size: large;color: darkgreen">@(PassportProcessingModel.TotalApplications)</b>
+                                </div>
+                            </div>
+                        </div>
+                    </RadzenCard>
+            
+                </EditForm>
+        
+
+                <div class="row justify-content-between mt-4">
+                    <div class="d-flex align-items-end justify-content-between">
+                        <RadzenButton ButtonStyle="ButtonStyle.Light"
+                                      Icon="cancel"
+                                      Text="Cancel"
+                                      Click="@OnCancel"/>
+
+                        @if (PassportProcessingId == Guid.Empty)
+                        {
+                            <RadzenButton ButtonType="ButtonType.Submit"
+                                          ButtonStyle="ButtonStyle.Success"
+                                          Size="ButtonSize.Small"
+                                          IsBusy="@IsSubmitted"
+                                          BusyText="Saving ..."
+                                          Icon="save"
+                                          Text="Save"/>
+                        }
+                        else
+                        {
+                            <RadzenButton ButtonType="ButtonType.Submit"
+                                          Size="ButtonSize.Small"
+                                          ButtonStyle="ButtonStyle.Success"
+                                          IsBusy="@IsSubmitted"
+                                          BusyText="Updating ..."
+                                          Icon="update"
+                                          Text="Update"/>
+                        }
+                    </div>
+                </div>
+            </EditForm>
+        </div>
+    </ContentTemplate>
+</SpinLoader>

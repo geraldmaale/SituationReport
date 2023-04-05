@@ -1,0 +1,124 @@
+﻿@page "/auditlogs/{AuditId:guid}/details"
+@inherits AuditDetailsBase
+@attribute [Authorize]
+
+<PageTitle>Audit Logs Details</PageTitle>
+ <h3>Audit Logs Details</h3>
+
+<SpinLoader IsLoading="@IsLoading">
+    <LoadingTemplate>
+        <div class="spinner">
+            <Wave Color="@SpinnerColor" Center="true" />
+        </div>
+    </LoadingTemplate>
+    <ContentTemplate>
+        <div>
+            <RadzenCard>
+                <div class="row">
+                    <div class="col-md-4">
+                        <div>
+                            <b>Timestamp</b>
+                        </div>
+                        <RadzenLabel Text="@AuditDetail.Timestamp.ToLongDateString()" />
+                    </div>
+        
+                    <div class="col-md-4">
+                        <div>
+                            <b>Username</b>
+                        </div>
+                        @AuditDetail.Username
+                    </div>
+    
+                    <div class="col-md-4">
+                        <div>
+                            <b>Full Name</b>
+                        </div>
+                        <div>
+                            @AuditDetail.FullName
+                        </div>
+                    </div>          
+                </div>
+         
+                <div class="row mt-2">
+                    <div class="col-md-4">
+                        <div>
+                            <b>Table Name</b>
+                        </div>
+                        <div>
+                            @AuditDetail.TableName
+                        </div>
+                    </div>
+        
+                    <div class="col-md-4">
+                        <div>
+                            <b>Action</b>
+                        </div>
+                        @AuditDetail.Action
+                    </div>
+                        
+        
+                    <div class="col-md-4">
+                        <div>
+                            <b>Primary Key</b>
+                        </div>
+                        <div>
+                            @AuditDetail.PrimaryKey
+                        </div>
+                    </div>
+                </div>
+         
+                <div class="row mt-2">
+                    <div>
+                        <b>Affected Columns</b>
+                        <RadzenTextArea Style="font-size: small;width: 100%;"
+                                        ReadOnly
+                                        @bind-Value="@AuditDetail.AffectedColumns">
+                        </RadzenTextArea>
+                    </div>
+                </div>
+         
+                <div class="row mt-2">
+                    <div class="col-md-6">
+                        <b>Old values</b>
+                        <RadzenTextArea id="prettyOldJSONFormat"
+                                        Style="font-size: small;width: 100%;color: darkred;"
+                                        ReadOnly
+                                        Rows="@_numPrettyRows"
+                                        @bind-Value="@AuditDetail.OldValues">
+                        </RadzenTextArea>
+                    </div>
+             
+                    <div class="col-md-6">
+                        <b>New values</b>
+                        <RadzenTextArea id="prettyNewJSONFormat"
+                                        Style="font-size: small;width: 100%; color: darkgreen;"
+                                        ReadOnly
+                                        Rows="@_numPrettyRows"
+                                        @bind-Value="@AuditDetail.NewValues">
+                        </RadzenTextArea>
+                    </div>
+                </div>
+            </RadzenCard>
+    
+            <div class="row justify-content-between mt-3">
+                <div class="d-flex align-items-end justify-content-between">
+                    <RadzenButton ButtonStyle="ButtonStyle.Light" Click="NavigateToList" Text="Back" />                
+                    <RadzenButton Click="@Pretty" Text="Format" />
+                </div>
+            </div>
+        </div>
+    </ContentTemplate>
+</SpinLoader>
+
+
+@code
+{
+    int _numPrettyRows = 1;
+
+    private async Task Pretty()
+    {
+        _numPrettyRows = 20;
+        await JsRuntime.InvokeAsync<object>("prettifyAuditJson");
+        await JsRuntime.InvokeAsync<object>("prettifyAuditJson");
+    }
+}

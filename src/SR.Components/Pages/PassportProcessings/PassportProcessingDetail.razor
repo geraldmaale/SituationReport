@@ -1,0 +1,120 @@
+﻿@page "/passportprocessings/{PassportProcessingId:guid}"
+@inherits PassportProcessingDetailBase
+@attribute [Authorize]
+
+<PageTitle>Passport Processing Details</PageTitle>
+<h3>Passport Processing Details</h3>
+
+<SpinLoader IsLoading="@IsLoading">
+    <LoadingTemplate>
+        <div class="spinner">
+            <Wave Color="@SpinnerColor" Center="true" />
+        </div>
+    </LoadingTemplate>
+    <ContentTemplate>
+        <div class="col-xl-6 p-0">
+            <RadzenCard>
+                <div class="row">
+                    <div class="col-md-6">
+                        <RadzenLabel Text="Entry Date"/>
+                        <div>
+                            <RadzenLabel Style="font-size: large;font-weight: bold"
+                                         Text="@PassportProcessingModel!.EntryDate.ToString(DateLabels.ShortDateTimeFormat)"/>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <RadzenLabel Text="Prepared by"/>
+                        <div>
+                            <RadzenLabel Style="font-size: large;font-weight: bold"
+                                         Text="@PassportProcessingModel.Officer"/>
+                        </div>
+                    </div>
+                </div>
+            </RadzenCard>
+
+            <RadzenCard class="mt-2">
+                <div class="row">
+                    <div class="col-md-3">
+                        <RadzenLabel Text="No. of New"></RadzenLabel>
+                        <div>
+                            <RadzenLabel Style="font-weight: bold; font-size: large;" Text="@PassportProcessingModel!.NumberOfNew.ToString()"/>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <RadzenLabel Text="No. of Renewal"></RadzenLabel>
+                        <div>
+                            <RadzenLabel Style="font-weight: bold; font-size: large;" Text="@PassportProcessingModel.NumberOfRenewal.ToString()"/>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <RadzenLabel Text="No. of Missing/Stolen"></RadzenLabel>
+                        <div>
+                            <RadzenLabel Style="font-weight: bold; font-size: large;" Text="@PassportProcessingModel.NumberOfMissing.ToString()"/>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <RadzenLabel Text="Total Processed" Style="font-size: large;color: darkgreen"></RadzenLabel>
+                        <div>
+                            <b style="font-size: large;color: darkgreen">@PassportProcessingModel.TotalProcessed.ToString()</b>
+                        </div>
+                    </div>
+                </div>
+            </RadzenCard>
+
+            <RadzenCard class="mt-2">
+                <div class="row">
+                    <div class="col-md-3">
+                        <RadzenLabel Text="No. of Children"></RadzenLabel>
+                        <div>
+                            <RadzenLabel Style="font-weight: bold; font-size: large;" Text="@PassportProcessingModel!.NumberOfChildren.ToString()"/>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <RadzenLabel Text="No. of Adults"></RadzenLabel>
+                        <div>
+                            <RadzenLabel Style="font-weight: bold; font-size: large;" Text="@PassportProcessingModel.NumberOfAdults.ToString()"/>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <RadzenLabel Text="Total" style="font-size: large;color: darkgreen"></RadzenLabel>
+                        <div>
+                            <b style="font-size: large;color: darkgreen">@(PassportProcessingModel.NumberOfChildren + PassportProcessingModel.NumberOfAdults)</b>
+                        </div>
+                    </div>
+                </div>
+            </RadzenCard>
+            <RadzenCard class="mt-2">
+                <div class="row">
+                    <div class="col-md-3">
+                        <RadzenLabel Text="No. Declined"></RadzenLabel>
+                        <div>
+                            <RadzenLabel Style="font-weight: bold; font-size: large;" Text="@PassportProcessingModel!.NumberDeclined.ToString()"/>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <RadzenLabel Text="Total Applications" style="font-size: large;color: darkgreen"></RadzenLabel>
+                        <div>
+                            <b style="font-size: large;color: darkgreen">@(PassportProcessingModel.TotalApplications.ToString())</b>
+                        </div>
+                    </div>
+                </div>
+            </RadzenCard>
+
+            <div class="row justify-content-between mt-4">
+                <div class="d-flex align-items-end justify-content-between">
+                    <RadzenButton ButtonStyle="ButtonStyle.Light"
+                                  Icon="arrow_left"
+                                  Text="Back"
+                                  Click="@OnCancel"/>
+
+                    <RadzenButton ButtonType="ButtonType.Button"
+                                  Click="UpdateData"
+                                  Size="ButtonSize.Small"
+                                  ButtonStyle="ButtonStyle.Success"
+                                  Icon="edit"
+                                  Text="Edit"/>
+                </div>
+            </div>
+        </div>
+    </ContentTemplate>
+</SpinLoader>

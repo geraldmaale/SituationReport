@@ -1,0 +1,31 @@
+﻿@inherits UserRolesBase
+@attribute [Authorize]
+
+<div class="row mt-2 d-flex">
+    @foreach(var item in UserRoleSections)
+    {
+        <div class="col-sm-3 my-1">
+            <RadzenCheckBox TValue="bool" @bind-Value="@item.IsSelected"/>
+            <RadzenLabel Text="@item.RoleName" />
+        </div>
+    }
+</div>
+
+<div class="mt-4">
+    @if (IsSubmitted)
+    {
+        <RadzenButton Size="ButtonSize.Small"
+                      Disabled="true">
+            Updating Roles ...
+        </RadzenButton>
+    }
+    else
+    {
+        <RadzenButton Size="ButtonSize.Small"
+                      Click="@UpdateRoles">
+            Update Roles
+        </RadzenButton>
+    }
+</div>
+
+

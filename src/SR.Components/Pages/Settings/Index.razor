@@ -1,0 +1,48 @@
+﻿@page "/settings"
+@inherits SettingsBase
+@attribute [Authorize]
+
+<PageTitle>Configure - Situation Desk</PageTitle>
+
+<h3>Setting Configurations</h3>
+
+<div>
+    <RadzenMenu class="col-xl-10">
+        <RadzenMenuItem Icon="settings" Text="Nationalities" Click="@OnNationalityClick"></RadzenMenuItem>
+        <RadzenMenuItem Icon="settings" Text="Permit Types" Click="@OnPermitTypeClick"></RadzenMenuItem>
+        <RadzenMenuItem Icon="settings" Text="Revenue Types" Click="@OnRevenueTypeClick"></RadzenMenuItem>
+        <RadzenMenuItem Icon="settings" Text="Operation Types" Click="@OnOperationTypeClick"></RadzenMenuItem>
+        <RadzenMenuItem Icon="settings" Text="Ashore Pass Types" Click="@OnAshorePassTypeClick"></RadzenMenuItem>
+        <RadzenMenuItem Icon="settings" Text="Vessel Types" Click="@OnVesselTypeClick"></RadzenMenuItem>
+    </RadzenMenu>
+</div>
+
+<RadzenCard class="col-xl-10 mt-4">
+    @switch (SettingsType)
+    {
+        case Settings.SettingsType.Nationality:
+            <NationalityList/>
+            break;
+        case Settings.SettingsType.PermitType:
+            <PermitTypeList/>
+            break;
+        case Settings.SettingsType.RevenueType:
+            <RevenueTypeList/>
+            break;
+        case Settings.SettingsType.OperationType:
+            <OperationTypeList/>
+            break;
+        case Settings.SettingsType.AshorePassType:
+            <AshorePassTypeList/>
+            break;
+        case Settings.SettingsType.VesselType:
+            <VesselTypeList />
+            break;
+        default:
+            <div class="alert alert-info">Configure your settings</div>
+            break;
+    }
+</RadzenCard>
+
+
+

@@ -1,0 +1,47 @@
+﻿@using SR.Shared.DTOs.Permits
+@inherits PermitTypeListBase
+
+<div class="row">
+    <div class="col-sm-10">
+        <h3>
+            Permit Types
+            <RadzenBadge BadgeStyle="BadgeStyle.Secondary" IsPill="true">@DataSource.Count()</RadzenBadge>
+        </h3>
+
+    </div>
+    <div class="col-sm-2">
+        <RadzenButton Size="ButtonSize.Small" ButtonStyle="ButtonStyle.Info" Text="Add New" Click="@OnNewDataAsync" />
+    </div>
+</div>
+
+<SpinLoader IsLoading="@IsLoading">
+    <LoadingTemplate>
+        <div class="spinner">
+            <Wave Color="@SpinnerColor" Center="true" />
+        </div>
+    </LoadingTemplate>
+    <ContentTemplate>
+        <RadzenDataGrid Data="@DataSource"
+                        TItem="PermitTypeDto"
+                        AllowPaging="true"
+                        IsLoading="@IsLoading"
+                        AllowSorting="true"
+                        Responsive="true"
+                        SelectionMode="DataGridSelectionMode.Single"
+                        ExpandMode="DataGridExpandMode.Multiple">
+            <Columns>
+                <RadzenDataGridColumn TItem="PermitTypeDto" Property="@nameof(PermitTypeDto.Name)" Title="Name" />
+                <RadzenDataGridColumn TItem="PermitTypeDto" Title="Actions" Width="30%" TextAlign="TextAlign.Center" Sortable="false">
+                    <Template Context="data">
+                        <RadzenButton ButtonStyle="ButtonStyle.Secondary"
+                                      Icon="edit" Class="m-1"
+                                      Click="@(() => OnEditDataAsync(data))" />
+                        <RadzenButton ButtonStyle="ButtonStyle.Danger"
+                                      Icon="delete" Class="m-1"
+                                      Click="@(() => OnDeleteDataAsync(data))" />
+                    </Template>
+                </RadzenDataGridColumn>
+            </Columns>
+        </RadzenDataGrid>
+    </ContentTemplate>
+</SpinLoader>

@@ -1,0 +1,148 @@
+﻿@page "/"
+@using SR.Shared.DTOs.Revenues
+@using SR.Shared.DTOs.Passports
+@using SR.Shared.DTOs.Permits
+@using SR.Shared.DTOs.Crews
+@using BlazorPro.Spinkit
+@inherits IndexBase
+@attribute [Authorize]
+
+<AuthorizeView>
+    <Authorized>
+        <PageTitle>Situation Desk</PageTitle>
+
+        <div class="my-2">
+            <div class="row">
+                <div class="col-xl-6">
+                    <RadzenCard>
+                        <h4 class="text-center">Revenue Collections</h4>
+                        <SpinLoader IsLoading="@IsLoading">
+                            <LoadingTemplate>
+                                <div class="spinner">
+                                    <Wave Color="@SpinnerColor" Center="true" />
+                                </div>
+                            </LoadingTemplate>
+                            <ContentTemplate>
+                                <RadzenChart>
+                                    <RadzenColumnSeries Data="@RevenueCollections"
+                                                        Title="Amount"
+                                                        CategoryProperty="@nameof(RevenueCollectionDto.EntryDate)"
+                                                        ValueProperty="@nameof(RevenueCollectionDto.TotalAmount)" />
+
+                                    <RadzenColumnOptions Radius="5" Margin="0" />
+                                    <RadzenLegend Visible="true" Position="LegendPosition.Bottom" />
+                                    <RadzenValueAxis FormatString="{0:N2}">
+                                        <RadzenGridLines Visible="true" />
+                                    </RadzenValueAxis>
+                                    <RadzenCategoryAxis Padding="20" FormatString="{0:dd-MMM}" />
+                                </RadzenChart>
+                            </ContentTemplate>
+                        </SpinLoader>
+                    </RadzenCard>
+                </div>
+
+                <div class="col-xl-6">
+                    <RadzenCard>
+                        <h4 class="text-center p-0">Crews Processing</h4>
+                        <SpinLoader IsLoading="@IsLoading">
+                            <LoadingTemplate>
+                                <div class="spinner">
+                                    <Wave Color="@SpinnerColor" Center="true" />
+                                </div>
+                            </LoadingTemplate>
+                            <ContentTemplate>
+                                <RadzenChart>
+                                    <RadzenLineSeries Smooth="true"
+                                                      Data="@CrewProcessingData"
+                                                      LineType="LineType.Dashed"
+                                                      Title="Total"
+                                                      CategoryProperty="@nameof(CrewProcessingDto.EntryDate)"
+                                                      ValueProperty="@nameof(CrewProcessingDto.Total)">
+
+                                        <RadzenMarkers MarkerType="MarkerType.Square" Fill="#0db34f" />
+                                        <RadzenLegend Visible="false" />
+                                        <RadzenValueAxis>
+                                            <RadzenGridLines Visible="true" />
+                                        </RadzenValueAxis>
+                                        <RadzenCategoryAxis FormatString="{0:dd-MMM}" />
+                                    </RadzenLineSeries>
+                                </RadzenChart>
+                            </ContentTemplate>
+                        </SpinLoader>
+                    </RadzenCard>
+                </div>
+            </div>
+        </div>
+
+        <div class="row my-2">
+            <div class="col-xl-6">
+                <RadzenCard>
+                    <h4 class="text-center">Passports Applications</h4>
+                    <SpinLoader IsLoading="@IsLoading">
+                        <LoadingTemplate>
+                            <div class="spinner">
+                                <Wave Color="@SpinnerColor" Center="true" />
+                            </div>
+                        </LoadingTemplate>
+                        <ContentTemplate>
+                            <RadzenChart>
+                                <RadzenAreaSeries Data="@PassportProcessingData"
+                                                  Smooth="true"
+                                                  Title="# Processed"
+                                                  LineType="LineType.Dashed"
+                                                  Fill="#0db34f"
+                                                  CategoryProperty="@nameof(PassportProcessingDto.EntryDate)"
+                                                  ValueProperty="@nameof(PassportProcessingDto.TotalProcessed)" />
+                                <RadzenAreaSeries Data="@PassportProcessingData"
+                                                  Title="# Declined"
+                                                  Fill="#eb0b38"
+                                                  LineType="LineType.Solid"
+                                                  CategoryProperty="@nameof(PassportProcessingDto.EntryDate)"
+                                                  ValueProperty="@nameof(PassportProcessingDto.NumberDeclined)" />
+
+                                <RadzenMarkers MarkerType="MarkerType.Square" />
+                                <RadzenLegend Visible="true" Position="LegendPosition.Bottom" />
+                                <RadzenValueAxis>
+                                    <RadzenGridLines Visible="true" />
+                                </RadzenValueAxis>
+                                <RadzenCategoryAxis FormatString="{0:dd-MMM}" />
+                            </RadzenChart>
+                        </ContentTemplate>
+                    </SpinLoader>
+                </RadzenCard>
+            </div>
+            <div class="col-xl-6">
+                <RadzenCard>
+                    <h4 class="text-center">Permits Processing</h4>
+                    <SpinLoader IsLoading="@IsLoading">
+                        <LoadingTemplate>
+                            <div class="spinner">
+                                <Wave Color="@SpinnerColor" Center="true" />
+                            </div>
+                        </LoadingTemplate>
+                        <ContentTemplate>
+                            <RadzenChart>
+                                <RadzenLineSeries Smooth="true"
+                                                  Data="@PermitProcessingData"
+                                                  CategoryProperty="@nameof(PermitProcessingDto.EntryDate)"
+                                                  LineType="LineType.Dashed"
+                                                  Title="Revenue"
+                                                  ValueProperty="@nameof(PermitProcessingDto.Total)">
+
+                                    <RadzenMarkers MarkerType="MarkerType.Square" Fill="#0db34f" />
+                                    <RadzenLegend Visible="false" />
+                                    <RadzenValueAxis>
+                                        <RadzenGridLines Visible="true" />
+                                    </RadzenValueAxis>
+                                    <RadzenCategoryAxis FormatString="{0:dd-MMM}" />
+                                </RadzenLineSeries>
+                            </RadzenChart>
+                        </ContentTemplate>
+                    </SpinLoader>
+                </RadzenCard>
+            </div>
+
+        </div>
+
+    </Authorized>
+</AuthorizeView>

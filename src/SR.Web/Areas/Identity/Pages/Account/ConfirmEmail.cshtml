@@ -1,0 +1,12 @@
+﻿@page
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+@model ConfirmEmailModel
+@{
+    ViewData["Title"] = "Confirm Email";
+    // Layout = "_LayoutLogin";
+}
+
+<h1 class="">@ViewData["Title"]</h1>
+<partial name="_StatusMessage" model="Model.StatusMessage" />
+
+<h5 class="text-white">Please <a class="btn btn-primary btn-block" href="~/identity/account/login">LOGIN</a> to your account now</h5>

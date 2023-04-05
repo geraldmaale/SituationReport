@@ -1,0 +1,48 @@
+﻿@page
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+@model LoginModel
+
+@{
+    ViewData["Title"] = "Log in | Situation Desk";
+    Layout = "Shared/_LayoutLogin";
+}
+
+<div class="row">
+    
+    <div class="col-sm-12 col-md-6 col-lg-5 col-xl-4 mx-auto">       
+        <div class="card p-4 rounded-plus login-bg">
+             <h3 class="auth-header">
+                Secure login
+            </h3>
+            <form id="js-login" novalidate="" method="post">
+
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                <div class="form-group">
+                    <label asp-for="Input.Email" class="form-label text-white">Email Addess</label>
+                    <input asp-for="Input.Email" class="form-control" autocomplete="username" aria-required="true" />                   
+                    <span asp-validation-for="Input.Email" class="text-danger"></span>
+                </div>
+                <div class="form-group mt-2">
+                    <label asp-for="Input.Password" class="form-label text-white">Password</label>
+                    <input asp-for="Input.Password" class="form-control" autocomplete="current-password" aria-required="true" />
+                    <span asp-validation-for="Input.Password" class="text-danger"></span>
+                </div>
+
+                <div class="form-group mt-3">                    
+                    <button id="login-submit" type="submit" class="btn w-100 btn-primary">LOG IN</button>
+                </div>
+                <div class="mt-2">
+                    <p>
+                        <a href="~/account/forgotpassword" class="nav-link">Forgot your password?</a>
+                    </p>
+                </div>
+            </form>
+        </div>
+    </div>
+
+</div>
+
+@section Scripts {
+<partial name="_ValidationScriptsPartial" />
+}

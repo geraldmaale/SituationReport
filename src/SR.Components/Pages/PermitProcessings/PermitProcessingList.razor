@@ -1,0 +1,71 @@
+﻿@page "/permitprocessings"
+@using SR.Shared.DTOs.Permits
+@inherits PermitProcesingListBase
+@attribute [Authorize]
+
+<PageTitle>PermitProcessings - Situation Desk</PageTitle>
+
+<div class="col-xl-10">
+    <div class="row">
+        <div class="col-sm-10">
+            <h3>
+                Permit Processings
+                <RadzenBadge BadgeStyle="BadgeStyle.Secondary" IsPill="true">@DataSource.Count()</RadzenBadge>
+            </h3>
+        </div>
+
+        <div class="col-sm-2">
+            <RadzenButton Size="ButtonSize.Small" ButtonStyle="ButtonStyle.Info" Text="Add New" Click="@OnNewData" />
+        </div>
+    </div>
+
+    <SpinLoader IsLoading="@IsLoading">
+        <LoadingTemplate>
+            <div class="spinner">
+                <Wave Color="@SpinnerColor" Center="true" />
+            </div>
+        </LoadingTemplate>
+        <ContentTemplate>
+            <RadzenDataGrid Data="@DataSource"
+                            Count="@DataSource.Count()"
+                            TItem="PermitProcessingDto"
+                            AllowPaging="true"
+                            PageSize="7"
+                            IsLoading="@IsLoading"
+                            AllowSorting="true"
+                            AllowFiltering="true"
+                            FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                            SelectionMode="DataGridSelectionMode.Single"
+                            PagerHorizontalAlign="HorizontalAlign.Left"
+                            ShowPagingSummary="true"
+                            Responsive="true">
+                <Columns>
+                    <RadzenDataGridColumn TItem="PermitProcessingDto"
+                                          Property="@nameof(PermitProcessingDto.EntryDate)"
+                                          Filterable="true"
+                                          Title="Entry Date">
+                        <Template Context="data">
+                            <span>@data.EntryDate.ToString(DateLabels.ShortDateTimeFormat)</span>
+                        </Template>
+                    </RadzenDataGridColumn>
+                    <RadzenDataGridColumn TItem="PermitProcessingDto" Property="@nameof(PermitProcessingDto.Total)" Width="15%" Title="Total" />
+                    <RadzenDataGridColumn TItem="PermitProcessingDto" Property="@nameof(PermitProcessingDto.OfficerName)" Title="Prepared By" />
+                    <RadzenDataGridColumn TItem="PermitProcessingDto" Title="Actions" Width="20%"
+                                          TextAlign="TextAlign.Center" Filterable="false" Sortable="false">
+                        <Template Context="data">
+                            <RadzenButton ButtonStyle="ButtonStyle.Info"
+                                          Icon="visibility" Class="m-1"
+                                          Click="@(() => OnDetailData(data))" />
+                            <RadzenButton ButtonStyle="ButtonStyle.Secondary"
+                                          Icon="edit" Class="m-1"
+                                          Click="@(() => OnEditData(data))" />
+                            <RadzenButton ButtonStyle="ButtonStyle.Danger"
+                                          Icon="delete" Class="m-1"
+                                          Click="@(() => OnDeleteDataAsync(data))" />
+                        </Template>
+                    </RadzenDataGridColumn>
+                </Columns>
+            </RadzenDataGrid>
+        </ContentTemplate>
+    </SpinLoader>
+</div>

@@ -1,0 +1,214 @@
+﻿@page "/permitprocessings/new"
+@page "/permitprocessings/edit/{PermitProcessingId:guid}"
+@using SR.Shared.DTOs.Permits
+@using SR.Shared.Entities
+@using Microsoft.AspNetCore.Components
+@inherits PermitProcessingNewBase
+@attribute [Authorize]
+
+@if (PermitProcessingId == Guid.Empty)
+{
+    <PageTitle>New Permit Processing - Situation Desk</PageTitle>
+    <h3>New Permit Processing</h3>
+}
+else
+{
+    <PageTitle>Edit Permit Processing - Situation Desk</PageTitle>
+    <h3>Edit Permit Processing</h3>
+}
+
+<SpinLoader IsLoading="@IsLoading">
+    <LoadingTemplate>
+        <div class="spinner">
+            <Wave Color="@SpinnerColor" Center="true" />
+        </div>
+    </LoadingTemplate>
+    <ContentTemplate>
+        <EditForm Model="@PermitUnitModel" OnValidSubmit="@OnValidSubmit">
+            <FluentValidationValidator />
+
+            <RadzenCard>
+                <div class="row">
+                    <div class="col-md-5">
+                        <RadzenLabel Text="Entry Date"/>
+                        <div>
+                            <RadzenDatePicker Placeholder="Entry Date"
+                                              Kind="DateTimeKind.Utc"
+                                              DateFormat="@DateLabels.ShortDateTimeFormat"
+                                              style="width: 100%;"
+                                              @bind-Value="@PermitUnitModel!.EntryDate"/>
+                            <ValidationMessage For="@(() => PermitUnitModel!.EntryDate)"/>
+                        </div>
+                    </div>
+                    <div class="col-md-5">
+                        @if (PermitProcessingId == Guid.Empty)
+                        {
+                            <RadzenLabel Text="To be prepared by"/>
+                            <div>
+                                <RadzenLabel Style="font-size: large;font-weight: bold" Text="@OfficerName"/>
+                            </div>
+                        }
+                        else
+                        {
+                            <RadzenLabel Text="Prepared by"/>
+                            <div>
+                                <RadzenLabel Style="font-size: large;font-weight: bold" 
+                                             Text="@OfficerName"/>
+                            </div>
+                        }
+                    </div>
+                    <div class="col-md-2">
+                        <RadzenLabel Text="Total"/>
+                        <div>
+                            <RadzenBadge Style="font-size: large;font-weight: bold">
+                                @PermitUnitModel!.Total
+                            </RadzenBadge>
+                        </div>
+                    </div>
+                </div>
+            </RadzenCard>
+        
+            <EditForm Model="@PermitUnitModel!.PermitProcessingDetails" Context="records">
+                <FluentValidationValidator />
+                <ValidationSummary />
+                <RadzenCard class="mt-2 col-sm-12">
+                    <div class="row">
+                        <h3 class="col-sm-8">Records</h3>
+                        <div class="col-sm-4">
+                            <RadzenButton Icon="add" Text="Add"
+                                          ButtonStyle="ButtonStyle.Info"
+                                          Size="ButtonSize.Small"
+                                          Click="@AddPermitRecord"/>
+                        </div>
+                        <RadzenDataGrid Data="@PermitUnitModel!.PermitProcessingDetails!.OrderBy(x => x.Name)"
+                                        IsLoading="@IsLoading"
+                                        Responsive="true">
+                            <Columns>
+                                <RadzenDataGridColumn TItem="PermitProcessingDetailManipulationDto"
+                                                      Property="@nameof(PermitProcessingDetailManipulationDto.Name)"
+                                                      Width="25%"
+                                                      Title="Applicant Name">
+                                    <Template Context="data">
+                                        <RadzenTextBox @bind-Value="@data.Name" 
+                                                       Style="width: 100%"></RadzenTextBox>
+                                    </Template>
+                                </RadzenDataGridColumn>
+                                <RadzenDataGridColumn TItem="PermitProcessingDetailManipulationDto"
+                                                      Width="10%"
+                                                      Property="@nameof(PermitProcessingDetailManipulationDto.Gender)"
+                                                      Title="Gender">
+                                    <Template Context="data">
+                                        <RadzenDropDown AllowClear="false"
+                                                        Class="w-100"
+                                                        Data=@(Enum.GetValues(typeof(GenderEnum)))
+                                                                @bind-Value="@data.Gender"/>
+                                    </Template>
+                                </RadzenDataGridColumn>
+                                <RadzenDataGridColumn TItem="PermitProcessingDetailManipulationDto"
+                                                      Property="@nameof(PermitProcessingDetailManipulationDto.NationalityId)"
+                                                      Title="Nationality">
+                                    <Template Context="data">
+                                        <RadzenDropDown AllowClear="true"
+                                                        class="w-100"
+                                                        Data=@NationalityTypes
+                                                        TextProperty="@nameof(NationalityType.Name)"
+                                                        ValueProperty="@nameof(NationalityType.Id)"
+                                                        @bind-Value="@data.NationalityId">
+                                        </RadzenDropDown>
+                                    </Template>
+                                </RadzenDataGridColumn>
+                                <RadzenDataGridColumn TItem="PermitProcessingDetailManipulationDto"
+                                                      Property="@nameof(PermitProcessingDetailManipulationDto.PermitTypeId)"
+                                                      Title="Permit Type">
+                                    <Template Context="data">
+                                        <RadzenDropDown AllowClear="true"
+                                                        class="w-100"
+                                                        Data=@PermitTypes
+                                                        TextProperty="@nameof(PermitType.Name)"
+                                                        ValueProperty="@nameof(PermitType.Id)"
+                                                        @bind-Value="@data.PermitTypeId">
+                                        </RadzenDropDown>
+                                    </Template>
+                                </RadzenDataGridColumn>
+                                <RadzenDataGridColumn TItem="PermitProcessingDetailManipulationDto"
+                                                      Property="@nameof(PermitProcessingDetailManipulationDto.PermitNumber)"
+                                                      Title="Permit #">
+                                    <Template Context="data">
+                                        <RadzenTextBox @bind-Value="@data.PermitNumber" Style="width: 100%"></RadzenTextBox>
+                                    </Template>
+                                </RadzenDataGridColumn>
+                                <RadzenDataGridColumn TItem="PermitProcessingDetailManipulationDto"
+                                                      Property="@nameof(PermitProcessingDetailManipulationDto.Duration)"
+                                                      Title="Duration">
+                                    <Template Context="data">
+                                        <RadzenTextBox @bind-Value="@data.Duration" Style="width: 100%"></RadzenTextBox>
+                                    </Template>
+                                </RadzenDataGridColumn>
+
+                                <RadzenDataGridColumn TItem="PermitProcessingDetailManipulationDto" Title="Delete"
+                                                      Width="10%"
+                                                      TextAlign="TextAlign.Center" Filterable="false" Sortable="false">
+                                    <Template Context="data">
+                                        <RadzenButton ButtonStyle="ButtonStyle.Danger" Size="ButtonSize.Small"
+                                                      Icon="delete" Class="m-1"
+                                                      Click="@(() => OnDeletePermitAsync(data))"/>
+                                    </Template>
+                                </RadzenDataGridColumn>
+
+                            </Columns>
+                        </RadzenDataGrid>
+                    </div>
+                </RadzenCard>
+
+                <RadzenCard class="mt-2 col-sm-12">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <RadzenLabel Text="Remarks"/>
+                            <div>
+                                <RadzenTextArea Style="width:100%">@PermitUnitModel.Remarks</RadzenTextArea>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <RadzenLabel Text="Penalties"/>
+                            <div>
+                                <RadzenTextArea Style="width:100%">@PermitUnitModel.Penalties</RadzenTextArea>
+                            </div>
+                        </div>
+                    </div>
+                </RadzenCard>
+
+            </EditForm>
+        
+
+            <div class="row justify-content-between mt-4">
+                <div class="d-flex align-items-end justify-content-between">
+                    <RadzenButton ButtonStyle="ButtonStyle.Light"
+                                  Icon="cancel"
+                                  Text="Cancel"
+                                  Click="@OnCancel"/>
+
+                    @if (PermitProcessingId == Guid.Empty)
+                    {
+                        <RadzenButton ButtonType="ButtonType.Submit"
+                                      ButtonStyle="ButtonStyle.Success"
+                                      Size="ButtonSize.Small"
+                                      IsBusy="@IsSubmitted"
+                                      BusyText="Saving ..."
+                                      Icon="save"
+                                      Text="Save"/>
+                    }
+                    else
+                    {
+                        <RadzenButton ButtonType="ButtonType.Submit"
+                                      Size="ButtonSize.Small"
+                                      ButtonStyle="ButtonStyle.Success"
+                                      IsBusy="@IsSubmitted"
+                                      BusyText="Updating ..."
+                                      Icon="update"
+                                      Text="Update"/>
+                    }
+                </div>
+            </div>
+        </EditForm>
+    </ContentTemplate>
+</SpinLoader>

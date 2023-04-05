@@ -1,0 +1,14 @@
+.page {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+}
+
+main {
+    flex: 1;
+}
+
+.sidebar {
+    background-image: linear-gradient(180deg, rgb(105, 150, 200) 0%, #185ABD 15%);
+}
+

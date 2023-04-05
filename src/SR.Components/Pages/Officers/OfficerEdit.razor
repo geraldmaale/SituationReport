@@ -1,0 +1,182 @@
+﻿@page "/officers/{officerId:guid}"
+@using SR.Shared.Entities
+@inherits OfficerEditBase
+@attribute [Authorize(Roles = UserRoles.Administrator)]
+
+@if (OfficerId == Guid.Empty)
+{
+    <PageTitle>New Officer - Situation Desk</PageTitle>
+    <h3>New Officer</h3>
+}
+else
+{
+    <PageTitle>Edit Officer - Situation Desk</PageTitle>
+    <h3>Edit Officer</h3>
+}
+
+<SpinLoader IsLoading="@IsLoading">
+    <LoadingTemplate>
+        <div class="spinner">
+            <Wave Color="@SpinnerColor" Center="true" />
+        </div>
+    </LoadingTemplate>
+    <ContentTemplate>
+        <RadzenCard class="col-xl-10 col-sm-12 col-md-12">
+            <EditForm Model="@OfficerModel" OnValidSubmit="@OnValidSubmit">
+                <FluentValidationValidator/>
+
+                <RadzenFieldset>
+                    <h5>Personal Info</h5>
+            
+                    <div class="row">
+                        <div class="col-md-4">
+                            <RadzenLabel Text="First Name"/>
+                            <RadzenTextBox Placeholder="First Name"
+                                           style="width: 100%;"
+                                           @bind-Value="@OfficerModel!.FirstName"/>
+                            <ValidationMessage For="@(() => OfficerModel!.FirstName)"/>
+                        </div>
+                        <div class="col-md-4">
+                            <RadzenLabel Text="Middle Name"/>
+                            <RadzenTextBox Placeholder="Middle Name"
+                                           style="width: 100%;"
+                                           @bind-Value="@OfficerModel!.MiddleName"/>
+                            <ValidationMessage For="@(() => OfficerModel!.MiddleName)"/>
+                        </div>
+                        <div class="col-md-4">
+                            <RadzenLabel Text="Last Name"/>
+                            <RadzenTextBox Placeholder="Last Name"
+                                           style="width: 100%;"
+                                           @bind-Value="@OfficerModel!.LastName"/>
+                            <ValidationMessage For="@(() => OfficerModel!.LastName)"/>
+                        </div>
+                    </div>
+                    <div class="row mt-4">
+                        <div class="col-md-3">
+                            <RadzenLabel Text="Gender"/>
+                            <RadzenDropDown AllowClear="true"
+                                            Placeholder="Gender"
+                                            Class="w-100"
+                                            Data=@(Enum.GetValues(typeof(GenderEnum)))
+                                @bind-Value="@OfficerModel.Gender"/>
+                            <ValidationMessage For="@(() => OfficerModel!.Gender)"/>
+                        </div>
+                        <div class="col-md-3">
+                            <RadzenLabel Text="Officer Rank"/>
+                            <RadzenDropDown AllowClear="true"
+                                            Placeholder="Rank"
+                                            Class="w-100"
+                                            Data=@(Enum.GetValues(typeof(RankEnum)))
+                                                @bind-Value="@OfficerModel.Rank">
+                            </RadzenDropDown>
+                            <ValidationMessage For="@(() => OfficerModel!.Rank)"/>
+                        </div>
+                        <div class="col-md-3">
+                            <RadzenLabel Text="Email Address"/>
+                            <RadzenTextBox Placeholder="Email Address"
+                                           style="width: 100%;"
+                                           @bind-Value="@OfficerModel!.Email"/>
+                            <ValidationMessage For="@(() => OfficerModel!.Email)"/>
+                        </div>
+                        <div class="col-md-3">
+                            <RadzenLabel Text="Phone Number"/>
+                            <RadzenTextBox Placeholder="Phone Number"
+                                           style="width: 100%;"
+                                           @bind-Value="@OfficerModel!.PhoneNumber"/>
+                            <ValidationMessage For="@(() => OfficerModel!.PhoneNumber)"/>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="my-2">
+                            <RadzenLabel Text="Notes"/>
+                            <RadzenTextArea Placeholder="Enter notes about officer here ..."
+                                            @bind-Value="@OfficerModel!.Notes"
+                                            Class="w-100"/>
+                        </div>
+                    </div>
+                </RadzenFieldset>
+        
+                <RadzenFieldset class="mt-2">
+                    <h5>Account Details</h5>
+                    <div class="row">
+                        @if (!string.IsNullOrWhiteSpace(Officer.Username))
+                        {
+                            <div class="col-sm-6">
+                                <RadzenTextBox Placeholder="Username ..."
+                                               @bind-Value="@OfficerModel!.Username"
+                                               Disabled="true"
+                                               Class="w-100"/>
+                                <ValidationMessage For="@(() => OfficerModel!.Username)"/>
+                            </div>
+                            <div class="col-sm-6">
+                                <RadzenButton ButtonType="ButtonType.Button"
+                                              ButtonStyle="ButtonStyle.Danger"
+                                              Size="ButtonSize.Small"
+                                              IsBusy="@IsSubmitted"
+                                              Click="@OnRemoveAccount"
+                                              BusyText="Removing ..."
+                                              Icon="delete"
+                                              Text="Remove"/>
+                            </div>
+                    
+                            <div class="row">
+                                <b class="mt-3">Application Roles</b>
+                                <UserRolesList UserId="@UserId"></UserRolesList>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="col-sm-6">
+                                <RadzenLabel Text="Username"/>
+                                <RadzenTextBox Placeholder="Username ..."
+                                               @bind-Value="@OfficerModel!.Username"
+                                               Class="w-100"/>
+                                <ValidationMessage For="@(() => OfficerModel!.Username)"/>
+                            </div>
+                            <div class="col-sm-6">
+                                <RadzenLabel Text="Password"/>
+                                <RadzenPassword Placeholder="Password ..."
+                                                @bind-Value="@OfficerModel!.Password"
+                                                Style="width: 100%"/>
+                                <ValidationMessage For="@(() => OfficerModel!.Password)"/>
+                            </div>
+                        }
+                    </div>
+            
+                </RadzenFieldset>
+
+                <div class="row mt-3 justify-content-between">
+                    <div class="d-flex align-items-end justify-content-between">
+                        <RadzenButton ButtonStyle="ButtonStyle.Light"
+                                      Size="ButtonSize.Small"
+                                      Icon="cancel"
+                                      Text="Cancel"
+                                      Click="@OnCancel"/>
+
+                        @if (OfficerId == Guid.Empty)
+                        {
+                            <RadzenButton ButtonType="ButtonType.Submit"
+                                          ButtonStyle="ButtonStyle.Success"
+                                          Size="ButtonSize.Small"
+                                          IsBusy="@IsSubmitted"
+                                          BusyText="Saving ..."
+                                          Icon="save"
+                                          Text="Save"/>
+                        }
+                        else
+                        {
+                            <RadzenButton ButtonType="ButtonType.Submit"
+                                          Size="ButtonSize.Small"
+                                          IsBusy="@IsSubmitted"
+                                          BusyText="Updating ..."
+                                          ButtonStyle="ButtonStyle.Success"
+                                          Icon="update"
+                                          Text="Update"/>
+                        }
+                    </div>
+                </div>
+
+            </EditForm>
+        </RadzenCard>
+    </ContentTemplate>
+</SpinLoader>

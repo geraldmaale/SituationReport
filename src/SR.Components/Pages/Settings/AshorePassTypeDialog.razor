@@ -1,0 +1,45 @@
+﻿@inherits AshorePassTypeDialogBase
+
+<EditForm Model="@AshorePassTypeModel" OnValidSubmit="@OnValidSubmit">
+    <FluentValidationValidator />
+    
+    <div class="row">
+        <div>
+            <RadzenLabel Text="AshorePass Type Name"/>
+            <RadzenTextBox Placeholder="AshorePass type"
+                           style="width: 100%;"
+                           @bind-Value="@AshorePassTypeModel!.Name"
+                           Name="Name"/>
+            <ValidationMessage For="@(() => AshorePassTypeModel!.Name)"/>
+        </div>
+    </div>
+    
+    <hr/>
+    <div class="row justify-content-between">
+        <div class="col-md-12 d-flex align-items-end justify-content-between">
+            <RadzenButton ButtonStyle="ButtonStyle.Light"
+                          Icon="cancel"
+                          Text="Cancel"
+                          Click="@OnCancel"/>
+            
+            @if (AshorePassTypeId == 0)
+            {
+                <RadzenButton ButtonType="ButtonType.Submit"
+                              ButtonStyle="ButtonStyle.Success"
+                              Size="ButtonSize.Small"
+                              Icon="save"
+                              Text="Save"/>
+            }
+            else
+            {
+                <RadzenButton ButtonType="ButtonType.Submit"
+                              Size="ButtonSize.Small"
+                              ButtonStyle="ButtonStyle.Success"
+                              Icon="update"
+                              Text="Update"/>
+            }
+        </div>
+    </div>
+
+</EditForm>
+

@@ -1,0 +1,49 @@
+﻿@page "/auditlogs"
+@using SR.Shared.DTOs.Audits
+@inherits AuditsListBase
+@attribute [Authorize]
+
+<PageTitle>Audit Logs</PageTitle>
+
+<div class="row">
+    <div class="col">
+        <h3>
+            Audit Logs
+            <RadzenBadge BadgeStyle="BadgeStyle.Secondary" IsPill="true">@Metadata.TotalCount</RadzenBadge>
+        </h3>
+    </div>
+
+    <SpinLoader IsLoading="@IsLoading">
+        <LoadingTemplate>
+            <Spinner />
+        </LoadingTemplate>
+        <ContentTemplate>
+            <RadzenDataGrid Data="@DataSource"
+                            TItem="AuditDto"
+                            Style="height:600px"
+                            IsLoading="@IsLoading"
+                            AllowPaging="false"
+                            AllowSorting="true"
+                            AllowFiltering="true"
+                            AllowVirtualization="true"
+                            Responsive="true"
+                            FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                            SelectionMode="DataGridSelectionMode.Single">
+                <Columns>
+                    <RadzenDataGridColumn TItem="AuditDto" Property="@nameof(AuditDto.Timestamp)" Filterable="true" Title="Timestamp" />
+                    <RadzenDataGridColumn TItem="AuditDto" Property="@nameof(AuditDto.FullName)" Filterable="true" Title="Officer Name" />
+                    <RadzenDataGridColumn TItem="AuditDto" Property="@nameof(AuditDto.Username)" Title="Username" />
+                    <RadzenDataGridColumn TItem="AuditDto" Property="@nameof(AuditDto.Action)" Title="Action" />
+                    <RadzenDataGridColumn TItem="AuditDto" Property="@nameof(AuditDto.TableName)" Title="Table Name" />
+                    <RadzenDataGridColumn TItem="AuditDto" Title="Actions" Width="10%" TextAlign="TextAlign.Center" Filterable="false" Sortable="false">
+                        <Template Context="data">
+                            <RadzenButton ButtonStyle="ButtonStyle.Secondary"
+                                          Icon="visibility" Class="m-1"
+                                          Click="@(() => OnDetailData(data))" />
+                        </Template>
+                    </RadzenDataGridColumn>
+                </Columns>
+            </RadzenDataGrid>
+        </ContentTemplate>
+    </SpinLoader>
+</div>

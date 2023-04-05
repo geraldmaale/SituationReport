@@ -1,0 +1,17 @@
+﻿@page
+@model LogoutModel
+@{
+    ViewData["Title"] = "Log out";
+}
+
+<header>
+    <p class="text-center">Logging out ...</p>
+</header>
+
+
+@*Automatically invoke script to logout*@
+<script>
+    (() => {
+        document.getElementById('logoutForm').submit();
+    })()
+</script>

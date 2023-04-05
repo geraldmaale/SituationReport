@@ -1,0 +1,22 @@
+﻿@inherits LayoutComponentBase
+
+<PageTitle>Situation Desk</PageTitle>
+
+<div>
+    <header>
+        <div class="top-row border-bottom box-shadow mb-3">
+            <a class="navbar-brand mx-auto" href="">Situation Desk</a>
+        </div>
+    </header>
+    
+    <div class="container">
+         @Body
+    </div>
+    
+    <footer class="footer position-absolute pl-3 text-muted">
+        <div class="container">
+            <p>&copy; @DateTime.UtcNow.Date.Year - Situation Desk</p>
+            <p>developed by <a href="https://greatideasgh.org" target="_blank">GreatIdeas Business Solutions</a></p>
+        </div>
+    </footer>
+</div>

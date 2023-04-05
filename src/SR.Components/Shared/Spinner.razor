@@ -1,0 +1,17 @@
+﻿<div class="spinner">
+    <Wave Color="@Color" Center="true" />
+</div>
+
+
+@code {
+
+    [Parameter]
+    public string Color { get; set; } = "#0288D1";
+
+    [Parameter]
+    public string Size { get; set; } = "70px";
+
+    [Parameter]
+    public RenderFragment Content { get; set; } = default!;
+
+}

@@ -1,0 +1,9 @@
+﻿@page "/"
+@namespace SR.Web.Pages
+@using SR.Components
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@{
+    Layout = "_Layout";
+}
+
+<component type="typeof(App)" render-mode="ServerPrerendered"/>

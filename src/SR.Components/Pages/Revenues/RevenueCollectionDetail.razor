@@ -1,0 +1,90 @@
+﻿@page "/revenuecollections/{RevenueCollectionId:guid}"
+@using SR.Shared.DTOs.Revenues
+@inherits RevenueCollectionDetailBase
+@attribute [Authorize]
+
+<PageTitle>Revenue Collection Details</PageTitle>
+<h3>Revenue Collection Details</h3>
+
+<SpinLoader IsLoading="@IsLoading">
+    <LoadingTemplate>
+        <div class="spinner">
+            <Wave Color="@SpinnerColor" Center="true" />
+        </div>
+    </LoadingTemplate>
+    <ContentTemplate>
+        <div  class="col-xl-8">
+            <RadzenCard>
+                <div class="row">
+                    <div class="col-md-5">
+                        <RadzenLabel Text="Entry Date"/>
+                        <div>
+                            <RadzenLabel Style="font-size: large;font-weight: bold"
+                                         Text="@RevenueCollectionModel!.EntryDate.ToString(DateLabels.ShortDateTimeFormat)"/>
+                        </div>
+                    </div>
+                    <div class="col-md-5">
+                        <RadzenLabel Text="Prepared by"/>
+                        <div>
+                            <RadzenLabel Style="font-size: large;font-weight: bold"
+                                         Text="@RevenueCollectionModel.Officer"/>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <RadzenLabel Text="Total Amount"/>
+                        <div>
+                            <RadzenBadge Style="font-size: large;font-weight: bold">
+                                @RevenueCollectionModel!.TotalAmount.ToString("N2")
+                            </RadzenBadge>
+                        </div>
+                    </div>
+            
+                </div>
+            </RadzenCard>
+
+            <RadzenCard class="mt-2">
+                <RadzenDataGrid Data="@RevenueCollectionModel.RevenueCollectionDetails"
+                                IsLoading="@IsLoading"
+                                Responsive="true">
+                    <Columns>
+                        <RadzenDataGridColumn TItem="RevenueCollectionDetailDto"
+                                              Property="@nameof(RevenueCollectionDetailDto.RevenueTypeName)"
+                                              Title="Revenue Type">
+                            <FooterTemplate>
+                                <b>Total Amount</b>
+                            </FooterTemplate>
+                        </RadzenDataGridColumn>
+                        <RadzenDataGridColumn TItem="RevenueCollectionDetailDto"
+                                              TextAlign="TextAlign.Right"
+                                              Property="@nameof(RevenueCollectionDetailDto.Amount)"
+                                              Title="Amount">
+                            <Template Context="data">
+                                <span>@data.Amount.ToString("N2")</span>
+                            </Template>
+                            <FooterTemplate>
+                                <b>@RevenueCollectionModel.TotalAmount.ToString("N2")</b>
+                            </FooterTemplate>
+                        </RadzenDataGridColumn>
+                
+                    </Columns>
+                </RadzenDataGrid>
+            </RadzenCard>
+    
+            <div class="row justify-content-between mt-4">
+                <div class="d-flex align-items-end justify-content-between">
+                    <RadzenButton ButtonStyle="ButtonStyle.Light"
+                                  Icon="arrow_left"
+                                  Text="Back"
+                                  Click="@OnCancel"/>
+
+                    <RadzenButton ButtonType="ButtonType.Button"
+                                  Click="UpdateData"
+                                  Size="ButtonSize.Small"
+                                  ButtonStyle="ButtonStyle.Success"
+                                  Icon="edit"
+                                  Text="Edit"/>
+                </div>
+            </div>
+        </div>
+    </ContentTemplate>
+</SpinLoader>

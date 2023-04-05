@@ -1,0 +1,45 @@
+﻿@inherits OperationTypeDialogBase
+
+<EditForm Model="@OperationTypeModel" OnValidSubmit="@OnValidSubmit">
+    <FluentValidationValidator />
+    
+    <div class="row">
+        <div>
+            <RadzenLabel Text="Operation Type Name"/>
+            <RadzenTextBox Placeholder="Operation type"
+                           style="width: 100%;"
+                           @bind-Value="@OperationTypeModel!.Name"
+                           Name="Name"/>
+            <ValidationMessage For="@(() => OperationTypeModel!.Name)"/>
+        </div>
+    </div>
+    
+    <hr/>
+    <div class="row justify-content-between">
+        <div class="col-md-12 d-flex align-items-end justify-content-between">
+            <RadzenButton ButtonStyle="ButtonStyle.Light"
+                          Icon="cancel"
+                          Text="Cancel"
+                          Click="@OnCancel"/>
+            
+            @if (OperationTypeId == 0)
+            {
+                <RadzenButton ButtonType="ButtonType.Submit"
+                              ButtonStyle="ButtonStyle.Success"
+                              Size="ButtonSize.Small"
+                              Icon="save"
+                              Text="Save"/>
+            }
+            else
+            {
+                <RadzenButton ButtonType="ButtonType.Submit"
+                              Size="ButtonSize.Small"
+                              ButtonStyle="ButtonStyle.Success"
+                              Icon="update"
+                              Text="Update"/>
+            }
+        </div>
+    </div>
+
+</EditForm>
+

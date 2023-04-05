@@ -1,0 +1,137 @@
+﻿@using Microsoft.AspNetCore.Components
+@inherits LayoutComponentBase
+@inject NavigationManager NavigationManager
+
+<AuthorizeView>
+    <Authorized>
+        <RadzenLayout>
+            <RadzenHeader>
+                <ChildContent>
+                    <div class="row justify-content-start align-items-center">
+                        <div class="col-9 d-flex align-items-center">
+                            <RadzenSidebarToggle Click="@(args => { sidebarExpanded = !sidebarExpanded; bodyExpanded = !bodyExpanded; })">
+                            </RadzenSidebarToggle>
+                            <RadzenLabel Text="Situation Desk">
+                            </RadzenLabel>
+                        </div>
+                        <div class="col-3 d-flex justify-content-end">
+                            <div class="d-none d-md-inline-flex align-items-center">
+                                <a href="profile" title="User" class="mx-2 mx-lg-3" target="_self">
+                                    Hello @context.User.Claims.FirstOrDefault(x=>x.Type == "name")?.Value!
+                                </a>
+                            </div>
+                            <RadzenMenu class="pr-1" Responsive="false">
+                                <RadzenMenuItem Text="Profile" Icon="account_circle">
+                                    <RadzenMenuItem Text="Account" Path="profile"></RadzenMenuItem>
+                                    <RadzenMenuItem Text="Logout" Click="@(OnLogout)"></RadzenMenuItem>
+                                </RadzenMenuItem>
+                            </RadzenMenu>
+                        </div>
+                    </div>
+                </ChildContent>
+            </RadzenHeader>
+            <RadzenBody @ref="@body0" @bind-Expanded="@bodyExpanded">
+                <ChildContent>
+                    <RadzenContentContainer Name="main">
+                        <div class="container-fluid">
+                            <div class="row">
+                                <div class="col-12 pt-4 pb-5 px-3 px-lg-5">
+                                    <ErrorBoundary @ref="errorBoundary">
+                                        <ChildContent>
+                                            @Body
+                                        </ChildContent>
+                                        <ErrorContent Context="ex">
+                                            @* <p class="blazor-error-boundary">@ex.Message</p> *@
+                                            <p class="blazor-error-boundary">Sorry, something terrible happened. </p>
+                                        </ErrorContent>
+                                    </ErrorBoundary>
+                                </div>
+                            </div>
+                        </div>
+                    </RadzenContentContainer>
+                </ChildContent>
+            </RadzenBody>
+            <RadzenSidebar @ref="@sidebar0" @bind-Expanded="@sidebarExpanded" class="sidebar">
+                <ChildContent>
+                    @*<div style="padding: 1rem">
+                    <RadzenTextBox Placeholder="Find component ..." type="search" style="width: 100%" />
+                    </div>*@
+                    <RadzenPanelMenu Match="NavLinkMatch.Prefix">
+                        <RadzenPanelMenuItem Text="Home" Icon="home" Path="/" />
+                        <RadzenPanelMenuItem Text="Data Entry" Icon="keyboard">
+                            <AuthorizeView Context="revenue" Roles="@UserRoles.CrewRole">
+                                <RadzenPanelMenuItem Text="Crew Members" Path="crewprocessings"></RadzenPanelMenuItem>
+                            </AuthorizeView>
+                            <AuthorizeView Context="revenue" Roles="@UserRoles.PermitRole">
+                                <RadzenPanelMenuItem Text="Permit Processing" Path="permitprocessings"></RadzenPanelMenuItem>
+                            </AuthorizeView>
+                            <AuthorizeView Context="revenue" Roles="@UserRoles.PassportRole">
+                                <RadzenPanelMenuItem Text="Passport Processing" Path="passportprocessings"></RadzenPanelMenuItem>
+                            </AuthorizeView>
+                            <AuthorizeView Context="revenue" Roles="@UserRoles.RevenueRole">
+                                <RadzenPanelMenuItem Text="Revenue Collection" Path="revenuecollections"></RadzenPanelMenuItem>
+                            </AuthorizeView>
+                            <AuthorizeView Context="operation" Roles="Operation Main,Operation Kpone,Operation Ashaiman">
+                                <RadzenPanelMenuItem Text="Operations" Path="operations"></RadzenPanelMenuItem>
+                            </AuthorizeView>
+                        </RadzenPanelMenuItem>
+                        <AuthorizeView Context="admin" Roles="@UserRoles.Administrator">
+                            <RadzenPanelMenuItem Text="Configure" Icon="settings" Path="settings" />
+                            <RadzenPanelMenuItem Text="Officers" Icon="people" Path="officers" />
+                            <RadzenPanelMenuItem Text="Audit Logs" Path="auditlogs" Icon="assessment"></RadzenPanelMenuItem>
+                        </AuthorizeView>
+                        <AuthorizeView Context="reports">
+                            <RadzenPanelMenuItem Text="Reports" Icon="menu_book" Path="reports" />
+                        </AuthorizeView>
+                        <RadzenPanelMenuItem Text="Logout" Path="identity/account/logout" Icon="logout"></RadzenPanelMenuItem>
+                    </RadzenPanelMenu>
+                </ChildContent>
+            </RadzenSidebar>
+        </RadzenLayout>
+    </Authorized>
+    <NotAuthorized>
+        <RadzenLayout>
+            <RadzenHeader>
+                <ChildContent>
+                    <h3>Situation Desk</h3>
+                </ChildContent>
+            </RadzenHeader>
+            <RadzenBody @ref="@body0" @bind-Expanded="@bodyExpanded">
+                <ChildContent>
+                    <RadzenContentContainer Name="main">
+                        <div class="container-fluid">
+                            <div class="row">
+                                <div class="col-12 pt-4 pb-5 px-3 px-lg-5">
+                                    @Body
+                                </div>
+                            </div>
+                        </div>
+                    </RadzenContentContainer>
+                </ChildContent>
+            </RadzenBody>
+        </RadzenLayout>
+    </NotAuthorized>
+</AuthorizeView>
+
+<RadzenDialog />
+<RadzenNotification />
+<RadzenTooltip />
+
+@code {
+    RadzenSidebar sidebar0;
+    RadzenBody body0;
+    bool sidebarExpanded = true;
+    bool bodyExpanded = false;
+
+    private ErrorBoundary? errorBoundary;
+
+    protected override void OnParametersSet()
+    {
+        errorBoundary?.Recover();
+    }
+
+    void OnLogout()
+    {
+        NavigationManager.NavigateTo("identity/account/logout", true);
+    }
+}

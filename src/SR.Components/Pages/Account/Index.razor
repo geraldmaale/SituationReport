@@ -1,0 +1,19 @@
+﻿@page "/profile"
+@attribute [Authorize]
+
+<PageInfo Title="Profile" ApplicationName="Situation Desk"/>
+
+<div class="col-xl-8">
+    <h3>Account Profile</h3>
+
+    <RadzenTabs RenderMode="TabRenderMode.Client">
+        <Tabs>
+            <RadzenTabsItem Text="Account Info">
+                <Profile/>
+            </RadzenTabsItem>
+            <RadzenTabsItem Text="Change Password">
+                <ChangePassword/>
+            </RadzenTabsItem>
+        </Tabs>
+    </RadzenTabs>
+</div>

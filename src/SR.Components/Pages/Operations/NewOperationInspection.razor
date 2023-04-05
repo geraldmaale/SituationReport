@@ -1,0 +1,158 @@
+﻿@page "/operations/{OperationOfficeId:guid}/inspection"
+@page "/operations/{OperationOfficeId:guid}/inspection/{OperationInspectionId:guid}"
+@using SR.Shared.Entities
+@using Microsoft.AspNetCore.Components
+@using SR.Shared.DTOs.Operations
+@inherits OperationInspectionsNewBase
+@attribute [Authorize(Roles = $"{UserRoles.OperationAshaiman},{UserRoles.OperationKpone},{UserRoles.OperationMain}")]
+
+<h2 style="color: #157347">@OfficeName</h2>
+
+@if (OperationInspectionId == Guid.Empty)
+{
+    <PageTitle>New Revenue Processing - Situation Desk</PageTitle>
+    <h3>New Revenue Processing</h3>
+}
+else
+{
+    <PageTitle>Edit Revenue Processing - Situation Desk</PageTitle>
+    <h3>Edit Revenue Processing</h3>
+}
+
+<SpinLoader IsLoading="@IsLoading">
+    <LoadingTemplate>
+        <div class="spinner">
+            <Wave Color="@SpinnerColor" Center="true" />
+        </div>
+    </LoadingTemplate>
+    <ContentTemplate>
+        <div class="col-xl-8 m-0 p-0">
+            <EditForm Model="@OperationInspectionModel" OnValidSubmit="@OnValidSubmit">
+                <FluentValidationValidator/>
+
+                <RadzenCard>
+                    <div class="row">
+                        <div class="col-md-5">
+                            <RadzenLabel Text="Entry Date"/>
+                            <div>
+                                <RadzenDatePicker Placeholder="Entry Date"
+                                                  Kind="DateTimeKind.Utc"
+                                                  DateFormat="@DateLabels.ShortDateTimeFormat"
+                                                  style="width: 100%;"
+                                                  @bind-Value="@OperationInspectionModel!.EntryDate"/>
+                                <ValidationMessage For="@(() => OperationInspectionModel!.EntryDate)"/>
+                            </div>
+                        </div>
+                        <div class="col-md-5">
+                            @if (OperationInspectionId == Guid.Empty)
+                            {
+                                <RadzenLabel Text="To be prepared by"/>
+                                <div>
+                                    <RadzenLabel Style="font-size: large;font-weight: bold" Text="@OfficerName"/>
+                                </div>
+                            }
+                            else
+                            {
+                                <RadzenLabel Text="Prepared by"/>
+                                <div>
+                                    <RadzenLabel Style="font-size: large;font-weight: bold" 
+                                                 Text="@OfficerName"/>
+                                </div>
+                            }
+                        </div>
+                        <div class="col-md-2">
+                            <RadzenLabel Text="Total Amount"/>
+                            <div>
+                                <RadzenBadge Style="font-size: large;font-weight: bold">
+                                    @OperationInspectionModel.Total
+                                </RadzenBadge>
+                            </div>
+                        </div>
+                
+                    </div>
+                </RadzenCard>
+        
+                <RadzenCard class="mt-2">
+                    <div class="row">
+                        <h3 class="col-sm-8">Records</h3>
+                        <div class="col-sm-4">
+                            <RadzenButton Icon="add" Text="Add"
+                                          ButtonStyle="ButtonStyle.Info"
+                                          Size="ButtonSize.Small"
+                                          Click="@(()=>AddRevenueRecord(new OperationInspectionDetailDto()))"/>
+                        </div>
+                    </div>
+                    <div class="row mt-2">
+                        <RadzenDataGrid Data="@OperationInspectionModel!.OperationInspectionDetails"
+                                        TItem="OperationInspectionDetailDto"
+                                        @ref="@DataGrid"
+                                        IsLoading="@IsLoading"
+                                        Responsive="true">
+                            <Columns>
+                                <RadzenDataGridColumn TItem="OperationInspectionDetailDto"
+                                                      Property="@nameof(OperationInspectionDetailDto.OperationTypeId)" 
+                                                      Title="Operation Type">
+                                    <Template Context="data">
+                                        <RadzenDropDown AllowClear="true"
+                                                        class="w-100"
+                                                        Data=@OperationTypes
+                                                        TextProperty="@nameof(OperationType.Name)"
+                                                        ValueProperty="@nameof(OperationType.Id)"
+                                                        @bind-Value="@data.OperationTypeId">
+                                        </RadzenDropDown>
+                                    </Template>
+                                </RadzenDataGridColumn>
+                                <RadzenDataGridColumn TItem="OperationInspectionDetailDto" Property="@nameof(OperationInspectionDetailDto.Number)" Title="Number">
+                                    <Template Context="data">
+                                        <RadzenNumeric TValue="int" @bind-Value="@data.Number" Min="1" Style="width: 100%"></RadzenNumeric>
+                                    </Template>
+                                </RadzenDataGridColumn>
+                                <RadzenDataGridColumn TItem="OperationInspectionDetailDto" Title="Delete"
+                                                      Width="10%"
+                                                      TextAlign="TextAlign.Center" Filterable="false" Sortable="false">
+                                    <Template Context="data">
+                                        <RadzenButton ButtonStyle="ButtonStyle.Danger" Size="ButtonSize.Small"
+                                                      Icon="delete" Class="m-1"
+                                                      Click="@(() => OnDeleteOperationTypeAsync(data))"/>
+                                    </Template>
+                                </RadzenDataGridColumn>
+
+                            </Columns>
+                        </RadzenDataGrid>
+                    </div>
+                </RadzenCard>
+
+                <div class="row justify-content-between mt-4">
+                    <div class="d-flex align-items-end justify-content-between">
+                        <RadzenButton ButtonStyle="ButtonStyle.Light"
+                                      Icon="cancel"
+                                      Text="Cancel"
+                                      Click="@OnCancel"/>
+
+                        @if (OperationInspectionId == Guid.Empty)
+                        {
+                            <RadzenButton ButtonType="ButtonType.Submit"
+                                          ButtonStyle="ButtonStyle.Success"
+                                          Size="ButtonSize.Small"
+                                          IsBusy="@IsSubmitted"
+                                          BusyText="Saving ..."
+                                          Icon="save"
+                                          Text="Save"/>
+                        }
+                        else
+                        {
+                            <RadzenButton ButtonType="ButtonType.Submit"
+                                          Size="ButtonSize.Small"
+                                          ButtonStyle="ButtonStyle.Success"
+                                          IsBusy="@IsSubmitted"
+                                          BusyText="Updating ..."
+                                          Icon="update"
+                                          Text="Update"/>
+                        }
+                    </div>
+                </div>
+            </EditForm>
+        </div>
+    </ContentTemplate>
+</SpinLoader>
+

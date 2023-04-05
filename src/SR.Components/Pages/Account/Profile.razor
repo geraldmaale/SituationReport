@@ -1,0 +1,27 @@
+﻿
+@inherits ProfileBase
+@attribute [Authorize]
+
+<h4>Update your profile</h4>
+<hr>
+
+<EditForm Model="@UserProfileModel"
+          OnValidSubmit="@HandleValidSubmit">
+    <DataAnnotationsValidator />
+            
+    <div class="my-2">
+        <label class="">Email</label>
+        <RadzenTextBox Class="w-100" @bind-Value="@UserProfileModel.Email" Disabled="true"/>
+    </div>
+            
+    <div class="my-2">
+        <label class="">Contact Name</label>
+        <RadzenTextBox Disabled="true" Class="w-100" @bind-Value="@UserProfileModel.FullName"/>
+        <ValidationMessage For="@(() => UserProfileModel.FullName)" />
+    </div>
+
+    @*<div class="d-flex justify-space-between my-4">
+        <RadzenButton ButtonType="ButtonType.Submit"
+                      Text="Update"/>
+    </div>*@
+</EditForm>
