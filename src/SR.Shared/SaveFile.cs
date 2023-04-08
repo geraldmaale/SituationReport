@@ -3,10 +3,10 @@
 #nullable disable
 public class UploadFile
 {
-    public string FileName { get; set; }
-    public string Path { get; set; }
+	public string FileName { get; set; }
+	public string Path { get; set; }
 
-    public Guid Id { get; set; }
+	public Guid Id { get; set; }
 }
 
 /// <summary>
@@ -14,7 +14,9 @@ public class UploadFile
 /// </summary>
 public class FilePaths
 {
-    public const string Voters = "voters";
-    public const string Candidates = "candidates";
-    
+	public const string Voters = "voters";
+	public const string Candidates = "candidates";
+
 }
+
+public record FileStatus();
