@@ -38,8 +38,7 @@ namespace SR.Web.ServiceBuilders
             });
 
             // Syncfusion Backend
-            SyncfusionLicenseProvider.RegisterLicense(
-                "NTcxNjI3QDMxMzkyZTM0MmUzMFI1RFhSWkNBOGo4aTR5MGtwdFJ1NFl1OEhQbW5qNjBLNU0rUFNlRHJrbGs9;NTcxNjI4QDMxMzkyZTM0MmUzMFFQYnEra0Jhd0QyZ1FKSFZLUDMrSkVZcjFqZ29RVEU3S25BVGxOYngvaGs9");
+            SyncfusionLicenseProvider.RegisterLicense("<license key here ...>");
 
             // EPPlus
             ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
